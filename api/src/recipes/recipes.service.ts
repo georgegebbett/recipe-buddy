@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
-import { hydrateRecipe } from './recipeFetcher';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Recipe, RecipeDocument } from './schemas/recipe.schema';
@@ -13,11 +11,7 @@ export class RecipesService {
   ) {}
 
   async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
-    const hydratedRecipe = await hydrateRecipe(createRecipeDto.url);
-
-    const recipeObj = new this.recipeModel(hydratedRecipe);
-
-    return recipeObj.save();
+    return new this.recipeModel(createRecipeDto).save();
   }
 
   findAll() {
@@ -26,10 +20,6 @@ export class RecipesService {
 
   findOne(id: string) {
     return this.recipeModel.findOne({ _id: id }).exec();
-  }
-
-  update(id: number, updateRecipeDto: UpdateRecipeDto) {
-    return `This action updates a #${id} recipe`;
   }
 
   async remove(id: string): Promise<Recipe> {

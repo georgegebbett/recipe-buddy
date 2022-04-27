@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       username: user.username,
       roles: user.roles,
     };
-    console.log('result:', result);
+    // console.log('result:', result);
     return result;
   }
 }

@@ -11,6 +11,9 @@ import { RolesGuard } from './auth/roles.guard';
 import { RecipesModule } from './recipes/recipes.module';
 import { GrocyService } from './grocy/grocy.service';
 import { GrocyController } from './grocy/grocy.controller';
+import { RecipesService } from './recipes/recipes.service';
+import { RecipesController } from './recipes/recipes.controller';
+import { GrocyModule } from './grocy/grocy.module';
 
 @Module({
   imports: [
@@ -18,14 +21,13 @@ import { GrocyController } from './grocy/grocy.controller';
     AuthModule,
     UsersModule,
     RecipesModule,
+    GrocyModule,
   ],
-  controllers: [AppController, GrocyController],
   providers: [
     AppService,
     UsersService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
-    GrocyService,
   ],
 })
 export class AppModule {}

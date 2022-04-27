@@ -17,6 +17,12 @@ export class User {
 
   @Prop({ required: false })
   roles: Role[];
+
+  @Prop({ required: false })
+  grocyBaseUrl: string;
+
+  @Prop({ required: false })
+  grocyApiKey: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

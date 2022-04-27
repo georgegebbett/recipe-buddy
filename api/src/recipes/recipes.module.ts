@@ -3,16 +3,26 @@ import { RecipesService } from './recipes.service';
 import { RecipesController } from './recipes.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Recipe, RecipeSchema } from './schemas/recipe.schema';
+import { hydrateRecipeAsHook } from './hooks/recipe.hooks';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{name: Recipe.name, schema: RecipeSchema}])
+    MongooseModule.forFeatureAsync([
+      {
+        name: Recipe.name,
+        useFactory: () => {
+          const schema = RecipeSchema;
+          schema.pre<Recipe>('save', async function () {
+            const recipe = this;
+            await hydrateRecipeAsHook(recipe);
+          });
+          return schema;
+        },
+      },
+    ]),
   ],
   controllers: [RecipesController],
   providers: [RecipesService],
-  exports: [
-    MongooseModule.forFeature([{name: Recipe.name, schema: RecipeSchema}]),
-    RecipesService
-  ]
+  exports: [RecipesService],
 })
 export class RecipesModule {}

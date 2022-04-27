@@ -1,29 +1,30 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Box,
   Button,
+  Container,
+  Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  TextField,
+  ThemeProvider,
+  Toolbar,
 } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
-import { Recipe } from "../types/types";
+import { Ingredient, Product, QuantityUnit, Recipe } from "../types/types";
 import { IngredientRow } from "../components/IngredientRow";
 import { Atom, useAtom } from "jotai";
+import { rbTheme } from "../styles/styles";
+import MenuAppBar from "../components/MenuAppBar";
 
 interface PropTypes {
   tokenAtom: Atom<any>;
-}
-
-interface Ingredient {
-  grocyProductId: string;
-  quantity: string;
-  useAnyUnit: boolean;
-  quantityUnitId: string;
 }
 
 export function AddToGrocyPage({ tokenAtom }: PropTypes) {
@@ -32,25 +33,38 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
   const [token] = useAtom(tokenAtom);
 
   const navigate = useNavigate();
-  const grocyBase = "https://test-r6aira2jrtr52y34eks6.demo.grocy.info";
-  const grocyKey = "bMSJRlURCPkG5tMW8xpnZYXS6dAYXmMM4ROomYrm7VX6rv8R7m";
   const getProductsSlug = "/api/objects/products";
   const getQuantityUnitsSlug = "/api/objects/quantity_units";
 
+  const [grocyBase, setGrocyBase] = useState<string>("");
+  const [grocyKey, setGrocyKey] = useState<string>("");
+
   const [recipe, setRecipe] = useState<Recipe>();
-  const [products, setProducts] = useState([]);
-  const [quantityUnits, setQuantityUnits] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [quantityUnits, setQuantityUnits] = useState<QuantityUnit[]>([]);
 
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  const [recipeLoaded, setRecipeLoaded] = useState(false);
-  const [productsLoaded, setProductsLoaded] = useState(false);
-  const [unitsLoaded, setUnitsLoaded] = useState(false);
+  const [recipeLoaded, setRecipeLoaded] = useState<boolean>(false);
+  const [productsLoaded, setProductsLoaded] = useState<boolean>(false);
+  const [unitsLoaded, setUnitsLoaded] = useState<boolean>(false);
 
-  const masterMap = new Map();
+  const [
+    allIngredientsConfirmedOrIgnored,
+    setAllIngredientsConfirmedOrIgnored,
+  ] = useState<boolean>(false);
 
-  const updateMasterMap = (key: string, value: any) => {
-    masterMap.set(key, value);
+  const [allIngredientsIgnored, setAllIngredientsIgnored] =
+    useState<boolean>(false);
+
+  const [masterMap, setMasterMap] = useState<Map<number, Ingredient>>(
+    new Map<number, Ingredient>()
+  );
+
+  const updateMasterMap = (key: number, value: any) => {
+    setMasterMap(new Map(masterMap.set(key, value)));
+    // console.log("Master map after transformation:");
+    // masterMap.forEach((v, k) => console.log(k, v));
   };
 
   async function retrieveRecipe() {
@@ -64,14 +78,36 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
     );
     setRecipe(data);
     setRecipeLoaded(true);
+    data.ingredients.forEach((value: Ingredient, index: number) =>
+      updateMasterMap(index, {})
+    );
   }
 
   async function getProducts() {
-    const { data } = await axios.get(`${grocyBase}${getProductsSlug}`, {
-      headers: { "GROCY-API-KEY": grocyKey },
+    interface ProductData {
+      data: Product[];
+    }
+
+    const { data }: ProductData = await axios.get(
+      `${grocyBase}${getProductsSlug}`,
+      {
+        headers: { "GROCY-API-KEY": grocyKey },
+      }
+    );
+
+    const sortedProducts = data.sort((a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
     });
-    setProducts(data);
+
+    setProducts(sortedProducts);
     setProductsLoaded(true);
+
+    return data;
   }
 
   async function getQuantityUnits() {
@@ -82,13 +118,38 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
     setUnitsLoaded(true);
   }
 
+  function areAllIngredientsConfirmedOrIgnored() {
+    try {
+      masterMap.forEach((value) => {
+        if (!value.isConfirmed && !value.isIgnored) {
+          throw new Error("Found unconfirmed ingredient");
+        }
+      });
+      setAllIngredientsConfirmedOrIgnored(true);
+    } catch (e) {
+      setAllIngredientsConfirmedOrIgnored(false);
+    }
+  }
+
+  function areAllIngredientsIgnored() {
+    try {
+      masterMap.forEach((value) => {
+        if (!value.isIgnored) {
+          throw new Error("Found unignored ingredient");
+        }
+      });
+      setAllIngredientsIgnored(true);
+    } catch (e) {
+      setAllIngredientsIgnored(false);
+    }
+  }
+
   async function addToGrocy() {
     const completedIngredients: Ingredient[] = [];
     try {
       console.log(recipe);
       masterMap.forEach((value) => {
-        console.log(value);
-        completedIngredients.push(value);
+        if (!value.isIgnored) completedIngredients.push(value);
         if (!value.isConfirmed) throw new Error("All items not confirmed");
       });
 
@@ -112,62 +173,130 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
     }
   }
 
-  useEffect(() => {
+  async function getGrocyCredentials() {
+    try {
+      const { data } = await axios.get("http://localhost:4000/users/me", {
+        headers: {
+          Authorization: `Bearer ${token.access_token}`,
+        },
+      });
+      setGrocyBase(data.grocyBaseUrl);
+      setGrocyKey(data.grocyApiKey);
+      console.log("Grocy credentials retrieved");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function preparePage() {
     retrieveRecipe();
     getProducts();
     getQuantityUnits();
+  }
+
+  useEffect(() => {
+    getGrocyCredentials();
   }, []);
+
+  useEffect(() => {
+    if (grocyKey !== "" && grocyBase !== "") {
+      console.log("Preparing page");
+      preparePage();
+    }
+  }, [grocyKey, grocyBase]);
 
   useEffect(() => {
     setIsLoaded(recipeLoaded && productsLoaded && unitsLoaded);
   }, [recipeLoaded, productsLoaded, unitsLoaded]);
 
-  return (
-    <Fragment>
-      {isLoaded ? (
-        <div>
-          <h1>Add recipe {params.recipeId} to Grocy</h1>
-          <h3>{recipe.name}</h3>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Recipe Ingredient</TableCell>
-                  <TableCell>Grocy Product</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Use any unit</TableCell>
-                  <TableCell>Quantity Unit</TableCell>
-                  <TableCell>Create Product</TableCell>
-                  <TableCell>Confirm</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {recipe.ingredients
-                  ? recipe.ingredients.map((ingredient, index) => {
-                      masterMap.set(index, {});
-                      return (
-                        <IngredientRow
-                          key={index}
-                          ingredient={ingredient}
-                          index={index}
-                          grocyBase={grocyBase}
-                          products={products}
-                          quantityUnits={quantityUnits}
-                          isLoaded={isLoaded}
-                          updateMasterMap={updateMasterMap}
-                          refreshProducts={getProducts}
-                        />
-                      );
-                    })
-                  : null}
-              </TableBody>
-            </Table>
-          </TableContainer>
+  useEffect(() => {
+    console.log("Master map updated - new values:");
+    masterMap.forEach((v, k) => console.log(k, v));
+    areAllIngredientsConfirmedOrIgnored();
+    areAllIngredientsIgnored();
+  }, [masterMap]);
 
-          <Button onClick={() => navigate("/recipes")}>Back</Button>
-          <Button onClick={addToGrocy}>Add recipe!</Button>
-        </div>
-      ) : null}
-    </Fragment>
+  return (
+    <ThemeProvider theme={rbTheme}>
+      <Box sx={{ display: "flex" }}>
+        <MenuAppBar tokenAtom={tokenAtom} />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+            backgroundColor: (theme) => theme.palette.grey[100],
+          }}
+        >
+          <Toolbar />
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+              {isLoaded ? (
+                <Fragment>
+                  <h1>Add recipe {params.id} to Grocy</h1>
+                  <TextField
+                    required
+                    label="Recipe Name"
+                    value={recipe?.name}
+                    // @ts-ignore
+                    onChange={(e) =>
+                      setRecipe({ ...recipe, name: e.target.value })
+                    }
+                  />
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Recipe Ingredient</TableCell>
+                          <TableCell>Grocy Product</TableCell>
+                          <TableCell>Quantity</TableCell>
+                          <TableCell>Use any unit</TableCell>
+                          <TableCell>Quantity Unit</TableCell>
+                          <TableCell>Create Product</TableCell>
+                          <TableCell>Confirm</TableCell>
+                          <TableCell>Ignore</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {recipe?.ingredients
+                          ? recipe?.ingredients.map((ingredient, index) => {
+                              return (
+                                <IngredientRow
+                                  key={index}
+                                  ingredient={ingredient}
+                                  index={index}
+                                  grocyBase={grocyBase}
+                                  products={products}
+                                  quantityUnits={quantityUnits}
+                                  isLoaded={isLoaded}
+                                  updateMasterMap={updateMasterMap}
+                                  refreshProducts={getProducts}
+                                />
+                              );
+                            })
+                          : null}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <Stack direction="row">
+                    <Button onClick={() => navigate("/recipes")}>Back</Button>
+                    <Button
+                      onClick={addToGrocy}
+                      disabled={
+                        !allIngredientsConfirmedOrIgnored ||
+                        allIngredientsIgnored
+                      }
+                    >
+                      Add recipe!
+                    </Button>
+                  </Stack>
+                </Fragment>
+              ) : null}
+            </Paper>
+          </Container>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }

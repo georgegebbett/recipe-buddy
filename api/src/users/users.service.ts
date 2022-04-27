@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import axios from 'axios';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +23,10 @@ export class UsersService {
     return this.userModel.findOne({ username: username }).exec();
   }
 
+  async findOneById(id: string): Promise<User | undefined> {
+    return this.userModel.findOne({ _id: id }).exec();
+  }
+
   async setRefreshTokenByUsername(
     username: string,
     refresh_token: string,
@@ -36,5 +42,31 @@ export class UsersService {
       { username: username },
       { $unset: { refresh_token: '' } },
     );
+  }
+
+  async findOneByIdAndUpdate(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const { data } = await axios.get(
+        `${updateUserDto.grocyBaseUrl}/api/system/info`,
+        {
+          headers: {
+            'GROCY-API-KEY': updateUserDto.grocyApiKey,
+          },
+        },
+      );
+      console.log(data);
+    } catch (e) {
+      throw new HttpException(
+        'Incorrect Grocy Credentials',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    return this.userModel.findByIdAndUpdate(id, {
+      $set: {
+        grocyBaseUrl: updateUserDto.grocyBaseUrl,
+        grocyApiKey: updateUserDto.grocyApiKey,
+      },
+    });
   }
 }

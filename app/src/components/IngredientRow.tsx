@@ -13,6 +13,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
+import { Product } from "../types/types";
 
 interface PropTypes {
   index: number;
@@ -48,8 +49,9 @@ export function IngredientRow(props: PropTypes) {
   const [useAnyUnit, setUseAnyUnit] = useState<boolean>(false);
   const [grocyProductId, setGrocyProductId] = useState<string>("");
   const [quantity, setQuantity] = useState<string>();
-  const [quantityUnitId, setQuantityUnitId] = useState<string>();
+  const [quantityUnitId, setQuantityUnitId] = useState<string>("");
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [isIgnored, setIsIgnored] = useState<boolean>(false);
 
   const [isReadyToRender, setIsReadyToRender] = useState<boolean>(false);
 
@@ -58,13 +60,26 @@ export function IngredientRow(props: PropTypes) {
     console.log("listener set");
   }
 
+  async function getNewestProduct() {
+    const productList = await refreshProducts();
+
+    let highestProductId: number = 0;
+
+    productList.forEach((product: Product) => {
+      if (parseInt(product.id) > highestProductId) {
+        highestProductId = parseInt(product.id);
+      }
+    });
+
+    setGrocyProductId(highestProductId.toString());
+  }
+
   async function logEvent(event: any) {
     if (!document.hidden) {
       console.log(event);
-      await refreshProducts();
       window.removeEventListener("visibilitychange", logEvent);
       console.log("listener unset");
-      setGrocyProductId(products[products.length - 1].id);
+      await getNewestProduct();
     }
   }
 
@@ -86,7 +101,7 @@ export function IngredientRow(props: PropTypes) {
       }
       disabled={disabled}
       value={quantityUnitId}
-      label="Quantity Unit"
+      // label="Quantity Unit"
     >
       {quantityUnits.map((unit) => (
         <MenuItem key={unit.id} value={unit.id}>
@@ -124,8 +139,16 @@ export function IngredientRow(props: PropTypes) {
       useAnyUnit: useAnyUnit,
       quantityUnitId: quantityUnitId,
       isConfirmed: !isConfirmed,
+      isIgnored: false,
     });
     setIsConfirmed(!isConfirmed);
+  };
+
+  const handleIgnore = () => {
+    updateMasterMap(index, {
+      isIgnored: !isIgnored,
+    });
+    setIsIgnored(!isIgnored);
   };
 
   const handleAutocompleteChange = (
@@ -145,22 +168,28 @@ export function IngredientRow(props: PropTypes) {
       setGrocyProductId(products[0].id);
       // @ts-ignore
       setQuantity(ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : "");
-      setQuantityUnitId(getQuantityUnitByProductId(products[0].id).id);
       setIsReadyToRender(true);
     }
   }, [isLoaded]);
+
+  useEffect(() => {
+    if (grocyProductId === "") return;
+    setQuantityUnitId(getQuantityUnitByProductId(grocyProductId).id);
+  }, [grocyProductId]);
 
   return isReadyToRender ? (
     <TableRow key={index}>
       <TableCell>{ingredient}</TableCell>
       <TableCell>
         <Autocomplete
-          disabled={isConfirmed}
+          disabled={isConfirmed || isIgnored}
           options={products}
           getOptionLabel={(product) => product.name}
           renderInput={(params) => <TextField {...params} label="Product" />}
           onChange={handleAutocompleteChange}
           value={products.filter((product) => product.id === grocyProductId)[0]}
+          disableClearable
+          sx={{ minWidth: 200 }}
         />
       </TableCell>
       <TableCell>
@@ -171,35 +200,50 @@ export function IngredientRow(props: PropTypes) {
             //@ts-ignore
             ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : ""
           }
-          disabled={isConfirmed}
+          disabled={isConfirmed || isIgnored}
         />
       </TableCell>
       <TableCell>
         <Checkbox
           checked={useAnyUnit}
           onChange={toggleAnyUnit}
-          disabled={isConfirmed}
+          disabled={isConfirmed || isIgnored}
         />
       </TableCell>
       <TableCell>
         {useAnyUnit ? (
-          <QuantityUnitDropdown disabled={isConfirmed} />
+          <QuantityUnitDropdown disabled={isConfirmed || isIgnored} />
         ) : (
-          getQuantityUnitByProductId(grocyProductId).name
+          <QuantityUnitDropdown disabled={true} />
         )}
       </TableCell>
 
       <TableCell>
         <Button
           onClick={() => createProduct(ingredient)}
-          disabled={isConfirmed}
+          disabled={isConfirmed || isIgnored}
         >
           Create Product
         </Button>
       </TableCell>
       <TableCell>
-        <Button onClick={handleConfirm}>
+        <Button
+          onClick={handleConfirm}
+          disabled={isIgnored}
+          color="success"
+          variant="contained"
+        >
           {isConfirmed ? "Confirmed" : "Confirm"}
+        </Button>
+      </TableCell>
+      <TableCell>
+        <Button
+          onClick={handleIgnore}
+          disabled={isConfirmed}
+          color="error"
+          variant="contained"
+        >
+          {isIgnored ? "Ignored" : "Ignore"}
         </Button>
       </TableCell>
     </TableRow>

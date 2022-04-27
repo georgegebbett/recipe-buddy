@@ -13,3 +13,22 @@ export interface Recipe {
   ingredients: string[];
   steps: string[];
 }
+
+export interface Ingredient {
+  grocyProductId: string;
+  quantity: string;
+  useAnyUnit: boolean;
+  quantityUnitId: string;
+  isConfirmed?: boolean;
+  isIgnored?: boolean;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+}
+
+export interface QuantityUnit {
+  id: string;
+  name: string;
+}

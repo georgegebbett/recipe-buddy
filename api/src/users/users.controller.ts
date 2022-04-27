@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Role } from './role.enum';
 import { Roles } from '../auth/decorators';
+
+interface RequestWithUserInfo extends Request {
+  user: {
+    userId: string;
+    username: string;
+    roles: Role[];
+  };
+}
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +19,12 @@ export class UsersController {
   @Roles(Role.Admin)
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('/me')
+  @Roles(Role.Admin, Role.User)
+  findMe(@Request() request: RequestWithUserInfo) {
+    return this.usersService.findOneById(request.user.userId);
   }
 
   @Post()
@@ -24,6 +38,19 @@ export class UsersController {
       username: username,
       password: password,
       roles: roles,
+    });
+  }
+
+  @Put()
+  @Roles(Role.Admin)
+  update(
+    @Body('grocyBaseUrl') grocyBaseUrl: string,
+    @Body('grocyApiKey') grocyApiKey: string,
+    @Request() request: RequestWithUserInfo,
+  ) {
+    return this.usersService.findOneByIdAndUpdate(request.user.userId, {
+      grocyBaseUrl: grocyBaseUrl,
+      grocyApiKey: grocyApiKey,
     });
   }
 }

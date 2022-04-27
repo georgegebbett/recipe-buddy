@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Recipe } from "../types/types";
 import { RecipeCard } from "./RecipeCard";
 import { Atom } from "jotai";
@@ -11,16 +11,28 @@ interface propTypes {
 
 export function Recipes({ recipes, tokenAtom, getRecipes }: propTypes) {
   return (
-    <Grid container spacing={2} justifyContent="center" alignItems="center">
-      {recipes.map((recipe, index) => (
-        <Grid key={index} item>
-          <RecipeCard
-            recipe={recipe}
-            tokenAtom={tokenAtom}
-            getRecipes={getRecipes}
-          />
-        </Grid>
-      ))}
-    </Grid>
+    <Paper
+      sx={{ p: 2, display: "flex", flexDirection: "column", minHeight: 240 }}
+    >
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        New recipes
+      </Typography>
+      <Grid
+        container
+        spacing={2}
+        justifyContent="flex-start"
+        alignItems="center"
+      >
+        {recipes.map((recipe, index) => (
+          <Grid key={index} item>
+            <RecipeCard
+              recipe={recipe}
+              tokenAtom={tokenAtom}
+              getRecipes={getRecipes}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Paper>
   );
 }
