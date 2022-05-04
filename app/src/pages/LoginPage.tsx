@@ -41,6 +41,10 @@ export function LoginPage() {
 
   const checkIfSetup = async () => {
     try {
+      if (token.access_token) {
+        navigate("/recipes");
+        return;
+      }
       const { data } = await axios.get("/api/users/setup");
       // const { data } = await get("/api/users/setup", token.access_token);
       if (!data.isSetup) navigate("/setup");
