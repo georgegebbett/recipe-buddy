@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardMedia,
   Collapse,
-  Icon,
   IconButton,
   IconButtonProps,
   styled,
@@ -17,11 +16,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
+import { tokenAtom } from "../App";
 
 interface RecipeProps {
   recipe: Recipe;
-  tokenAtom: Atom<any>;
   getRecipes: Function;
 }
 
@@ -48,7 +47,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export function RecipeCard({ recipe, tokenAtom, getRecipes }: RecipeProps) {
+export function RecipeCard({ recipe, getRecipes }: RecipeProps) {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
 
@@ -81,7 +80,7 @@ export function RecipeCard({ recipe, tokenAtom, getRecipes }: RecipeProps) {
   };
 
   const deleteRecipe = async () => {
-    await axios.delete(`http://localhost:4000/recipes/${recipe._id}`, {
+    await axios.delete(`/api/recipes/${recipe._id}`, {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
       },

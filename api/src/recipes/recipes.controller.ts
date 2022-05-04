@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 

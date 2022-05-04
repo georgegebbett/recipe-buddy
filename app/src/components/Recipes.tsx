@@ -1,15 +1,13 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import { Recipe } from "../types/types";
 import { RecipeCard } from "./RecipeCard";
-import { Atom } from "jotai";
 
 interface propTypes {
   recipes: Array<Recipe>;
-  tokenAtom: Atom<any>;
   getRecipes: Function;
 }
 
-export function Recipes({ recipes, tokenAtom, getRecipes }: propTypes) {
+export function Recipes({ recipes, getRecipes }: propTypes) {
   return (
     <Paper
       sx={{ p: 2, display: "flex", flexDirection: "column", minHeight: 240 }}
@@ -17,22 +15,24 @@ export function Recipes({ recipes, tokenAtom, getRecipes }: propTypes) {
       <Typography variant="h5" sx={{ mb: 2 }}>
         New recipes
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        justifyContent="flex-start"
-        alignItems="center"
-      >
-        {recipes.map((recipe, index) => (
-          <Grid key={index} item>
-            <RecipeCard
-              recipe={recipe}
-              tokenAtom={tokenAtom}
-              getRecipes={getRecipes}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {recipes.length === 0 ? (
+        <Typography sx={{ textAlign: "center", mt: 7 }} variant="h6">
+          No recipes available for import, why not add one?
+        </Typography>
+      ) : (
+        <Grid
+          container
+          spacing={2}
+          justifyContent="flex-start"
+          alignItems="center"
+        >
+          {recipes.map((recipe, index) => (
+            <Grid key={index} item>
+              <RecipeCard recipe={recipe} getRecipes={getRecipes} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Paper>
   );
 }

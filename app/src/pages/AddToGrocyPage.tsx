@@ -19,15 +19,12 @@ import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { Ingredient, Product, QuantityUnit, Recipe } from "../types/types";
 import { IngredientRow } from "../components/IngredientRow";
-import { Atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
+import { tokenAtom } from "../App";
 
-interface PropTypes {
-  tokenAtom: Atom<any>;
-}
-
-export function AddToGrocyPage({ tokenAtom }: PropTypes) {
+export function AddToGrocyPage() {
   const params = useParams();
 
   const [token] = useAtom(tokenAtom);
@@ -68,14 +65,11 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
   };
 
   async function retrieveRecipe() {
-    const { data } = await axios.get(
-      `http://localhost:4000/recipes/${params.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      }
-    );
+    const { data } = await axios.get(`/api/recipes/${params.id}`, {
+      headers: {
+        Authorization: `Bearer ${token.access_token}`,
+      },
+    });
     setRecipe(data);
     setRecipeLoaded(true);
     data.ingredients.forEach((value: Ingredient, index: number) =>
@@ -150,12 +144,14 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
       console.log(recipe);
       masterMap.forEach((value) => {
         if (!value.isIgnored) completedIngredients.push(value);
-        if (!value.isConfirmed) throw new Error("All items not confirmed");
+        if (!value.isConfirmed && !value.isIgnored)
+          throw new Error("All items not confirmed/ignored");
       });
 
       await axios.post(
-        "http://localhost:4000/grocy/addRecipe",
+        "/api/grocy/addRecipe",
         {
+          _id: recipe?._id,
           name: recipe?.name,
           steps: recipe?.steps,
           imageUrl: recipe?.imageUrl,
@@ -175,7 +171,7 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
 
   async function getGrocyCredentials() {
     try {
-      const { data } = await axios.get("http://localhost:4000/users/me", {
+      const { data } = await axios.get("/api/users/me", {
         headers: {
           Authorization: `Bearer ${token.access_token}`,
         },
@@ -219,7 +215,7 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar tokenAtom={tokenAtom} />
+        <MenuAppBar />
         <Box
           component="main"
           sx={{
@@ -239,9 +235,11 @@ export function AddToGrocyPage({ tokenAtom }: PropTypes) {
                     required
                     label="Recipe Name"
                     value={recipe?.name}
-                    // @ts-ignore
                     onChange={(e) =>
-                      setRecipe({ ...recipe, name: e.target.value })
+                      setRecipe((recipe) => {
+                        if (!recipe) return;
+                        return { ...recipe, name: e.target.value };
+                      })
                     }
                   />
                   <TableContainer>

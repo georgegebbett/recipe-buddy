@@ -3,6 +3,7 @@ import { AddRecipeToGrocyDto } from './dto/add-recipe-to-grocy.dto';
 import axios from 'axios';
 import { uid } from 'rand-token';
 import { UsersService } from '../users/users.service';
+import { RecipesService } from '../recipes/recipes.service';
 
 const newRecipeSlug = '/api/objects/recipes';
 const newIngredientSlug = '/api/objects/recipes_pos';
@@ -16,7 +17,10 @@ interface RequestWithUserInfo extends Request {
 
 @Injectable()
 export class GrocyService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly recipesService: RecipesService,
+  ) {}
 
   grocyBase = '';
   grocyKey = '';
@@ -115,6 +119,7 @@ export class GrocyService {
     addRecipeToGrocyDto: AddRecipeToGrocyDto,
     req: RequestWithUserInfo,
   ): Promise<any> {
+    console.log(addRecipeToGrocyDto);
     try {
       const userInfo = await this.usersService.findOneById(req.user.userId);
       this.grocyBase = userInfo.grocyBaseUrl;
@@ -135,6 +140,7 @@ export class GrocyService {
     } catch (e) {
       throw new HttpException(e.message, 500);
     }
+    await this.recipesService.remove(addRecipeToGrocyDto._id);
     return Promise.resolve({ message: 'Recipe created successfully' });
   }
 }

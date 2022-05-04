@@ -10,6 +10,21 @@ import axios from 'axios';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  async setup(createUserDto: CreateUserDto): Promise<User> {
+    if ((await this.findAll()).length === 0) {
+      const createdUser = new this.userModel(createUserDto);
+      return createdUser.save();
+    }
+    throw new HttpException('User already set up', HttpStatus.FORBIDDEN);
+  }
+
+  async isSetup(): Promise<object> {
+    const isSetup = (await this.userModel.find({}).exec()).length !== 0;
+    return Promise.resolve({
+      isSetup: isSetup,
+    });
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();

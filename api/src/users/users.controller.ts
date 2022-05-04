@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Role } from './role.enum';
-import { Roles } from '../auth/decorators';
+import { Public, Roles } from '../auth/decorators';
 
 interface RequestWithUserInfo extends Request {
   user: {
@@ -51,6 +51,25 @@ export class UsersController {
     return this.usersService.findOneByIdAndUpdate(request.user.userId, {
       grocyBaseUrl: grocyBaseUrl,
       grocyApiKey: grocyApiKey,
+    });
+  }
+
+  @Get('/setup')
+  @Public()
+  getIsSetup() {
+    return this.usersService.isSetup();
+  }
+
+  @Post('/setup')
+  @Public()
+  setupUser(
+    @Body('username') username: string,
+    @Body('password') password: string,
+  ) {
+    return this.usersService.setup({
+      username: username,
+      password: password,
+      roles: [Role.Admin, Role.User],
     });
   }
 }

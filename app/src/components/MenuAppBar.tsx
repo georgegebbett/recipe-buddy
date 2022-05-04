@@ -1,39 +1,24 @@
 import {
-  IconButton,
-  Toolbar,
   AppBar as MuiAppBar,
-  Typography,
-  Menu,
-  MenuItem,
-  Box,
-  Drawer as MuiDrawer,
-  Divider,
-  List,
   AppBarProps as MuiAppBarProps,
-  styled,
-  ListItem,
+  Divider,
+  Drawer as MuiDrawer,
+  IconButton,
+  List,
   ListItemButton,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
+  styled,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Atom, useAtom } from "jotai";
-import { Token } from "../types/types";
-import {
-  AccountCircle,
-  Book,
-  ChevronLeft,
-  Receipt,
-  Settings,
-  SvgIconComponent,
-} from "@mui/icons-material";
-import { Component, Fragment, ReactNode, useState } from "react";
+import { useAtom } from "jotai";
+import { Book, ChevronLeft, Settings } from "@mui/icons-material";
+import { Fragment, ReactNode, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
-interface PropTypes {
-  tokenAtom: Atom<Token>;
-}
+import { tokenAtom } from "../App";
 
 const drawerWidth: number = 240;
 
@@ -85,14 +70,14 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-export default function MenuAppBar({ tokenAtom }: PropTypes) {
+export default function MenuAppBar() {
   const [token, setToken] = useAtom(tokenAtom);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(true);
 
-  const handleMenu = (event: Event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenu = (event: Event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -108,7 +93,7 @@ export default function MenuAppBar({ tokenAtom }: PropTypes) {
   const toggleDrawerOpen = () => setOpen(!open);
 
   const logout = async () => {
-    await axios.delete("http://localhost:4000/auth/login", {
+    await axios.delete("/api/auth/login", {
       headers: { Authorization: `Bearer ${token.access_token}` },
     });
     // @ts-ignore
@@ -144,23 +129,6 @@ export default function MenuAppBar({ tokenAtom }: PropTypes) {
           >
             Recipe Buddy
           </Typography>
-          {/*{token.username ? (*/}
-          {/*  <div>*/}
-          {/*    <IconButton edge="start" color="inherit" onClick={handleMenu}>*/}
-          {/*      <AccountCircle />*/}
-          {/*    </IconButton>*/}
-          {/*    <Menu*/}
-          {/*      open={Boolean(anchorEl)}*/}
-          {/*      anchorEl={anchorEl}*/}
-          {/*      anchorOrigin={{ vertical: "top", horizontal: "right" }}*/}
-          {/*      keepMounted*/}
-          {/*      transformOrigin={{ vertical: "top", horizontal: "right" }}*/}
-          {/*      onClose={handleClose}*/}
-          {/*    >*/}
-          {/*      <MenuItem onClick={logout}>Logout</MenuItem>*/}
-          {/*    </Menu>*/}
-          {/*  </div>*/}
-          {/*) : null}*/}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -178,13 +146,21 @@ export default function MenuAppBar({ tokenAtom }: PropTypes) {
         </Toolbar>
         <Divider />
         <List component="nav">
-          <ListItemButton component={Link} to="/recipes">
+          <ListItemButton
+            component={Link}
+            to="/recipes"
+            disabled={!token.access_token}
+          >
             <ListItemIcon>
               <Book />
             </ListItemIcon>
             <ListItemText primary="Recipes" />
           </ListItemButton>
-          <ListItemButton component={Link} to="/settings">
+          <ListItemButton
+            component={Link}
+            to="/settings"
+            disabled={!token.access_token}
+          >
             <ListItemIcon>
               <Settings />
             </ListItemIcon>

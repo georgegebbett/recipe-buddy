@@ -1,5 +1,5 @@
-import { Atom, useAtom } from "jotai";
-import { Fragment, useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { Recipe } from "../types/types";
 import axios from "axios";
 import { Recipes } from "../components/Recipes";
@@ -16,8 +16,9 @@ import { AddRecipeModal } from "../components/AddRecipeModal";
 import AddIcon from "@mui/icons-material/Add";
 import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
+import { tokenAtom } from "../App";
 
-export function RecipeDisplayPage({ tokenAtom }: propTypes) {
+export function RecipeDisplayPage() {
   const [token] = useAtom(tokenAtom);
 
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
@@ -30,7 +31,7 @@ export function RecipeDisplayPage({ tokenAtom }: propTypes) {
   };
 
   const getRecipes = async () => {
-    const { data } = await axios.get("http://localhost:4000/recipes", {
+    const { data } = await axios.get("/api/recipes", {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
       },
@@ -46,7 +47,7 @@ export function RecipeDisplayPage({ tokenAtom }: propTypes) {
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar tokenAtom={tokenAtom} />
+        <MenuAppBar />
         <Box
           component="main"
           sx={{
@@ -58,18 +59,13 @@ export function RecipeDisplayPage({ tokenAtom }: propTypes) {
         >
           <Toolbar />
           <AddRecipeModal
-            tokenAtom={tokenAtom}
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             getRecipes={getRecipes}
           />
           <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Stack spacing={2}>
-              <Recipes
-                recipes={recipes}
-                tokenAtom={tokenAtom}
-                getRecipes={getRecipes}
-              />
+              <Recipes recipes={recipes} getRecipes={getRecipes} />
             </Stack>
           </Container>
           <Fab
@@ -87,6 +83,6 @@ export function RecipeDisplayPage({ tokenAtom }: propTypes) {
   );
 }
 
-interface propTypes {
-  tokenAtom: Atom<any>;
-}
+// interface propTypes {
+//   tokenAtom: Atom<any>;
+// }

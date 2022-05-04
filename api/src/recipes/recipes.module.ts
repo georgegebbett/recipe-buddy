@@ -23,6 +23,21 @@ import { hydrateRecipeAsHook } from './hooks/recipe.hooks';
   ],
   controllers: [RecipesController],
   providers: [RecipesService],
-  exports: [RecipesService],
+  exports: [
+    RecipesService,
+    MongooseModule.forFeatureAsync([
+      {
+        name: Recipe.name,
+        useFactory: () => {
+          const schema = RecipeSchema;
+          schema.pre<Recipe>('save', async function () {
+            const recipe = this;
+            await hydrateRecipeAsHook(recipe);
+          });
+          return schema;
+        },
+      },
+    ]),
+  ],
 })
 export class RecipesModule {}

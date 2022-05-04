@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "../testUtils";
-import { test, expect } from "vitest";
+import { expect, test } from "vitest";
 import { Recipes } from "../../src/components/Recipes";
 import { tokenAtom } from "../../src/App";
 

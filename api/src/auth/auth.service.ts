@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { uid } from 'rand-token';
-import { User } from '../users/schemas/user.schema';
 import { refreshTokenSize } from './constants';
 
 @Injectable()

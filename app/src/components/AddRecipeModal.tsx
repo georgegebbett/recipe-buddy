@@ -1,29 +1,24 @@
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Input,
-  Modal,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { Atom, useAtom } from "jotai";
-import axios from "axios";
+import { useAtom } from "jotai";
+import { tokenAtom } from "../App";
+import { post } from "../helpers/backendRequests";
 
 interface propTypes {
-  tokenAtom: Atom<any>;
   modalOpen: boolean;
   setModalOpen: Function;
   getRecipes: Function;
 }
 
 export function AddRecipeModal({
-  tokenAtom,
   modalOpen,
   setModalOpen,
   getRecipes,
@@ -33,33 +28,15 @@ export function AddRecipeModal({
   const [token] = useAtom(tokenAtom);
 
   const handleClose = () => {
+    setNewRecipeUrl("");
     setModalOpen(false);
   };
 
   const addRecipe = async () => {
-    await axios.post(
-      "http://localhost:4000/recipes",
-      { url: newRecipeUrl },
-      {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      }
-    );
+    await post("/recipes", { url: newRecipeUrl }, token.access_token);
+
     getRecipes();
     handleClose();
-  };
-
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
   };
 
   return (
