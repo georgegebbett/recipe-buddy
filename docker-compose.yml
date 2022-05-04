@@ -4,16 +4,16 @@ services:
   mongo:
     image: mongo
     restart: always
-    ports:
-      - "27017:27017"
+#    ports:
+#      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
 
   backend:
     build: ./api
-    ports:
-      - "4000:4000"
+#    ports:
+#      - "4000:4000"
     depends_on:
       - "mongo"
 
@@ -21,7 +21,7 @@ services:
     build:
       context: ./app
     ports:
-      - "3000:80"
+      - "4000:80"
     depends_on:
       - "backend"
 
