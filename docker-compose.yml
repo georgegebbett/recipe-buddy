@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  backend:
+    build: ./api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - "mongo"
+
+  frontend:
+    build:
+      context: ./app
+    ports:
+      - "3000:80"
+    depends_on:
+      - "backend"
+
+volumes:
+  mongo:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
