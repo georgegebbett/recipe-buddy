@@ -11,7 +11,15 @@ services:
       - mongo_db:/data/db
 
   backend:
-    build: ./api
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - type: bind
+        source: ./api
+        target: /api
+    ports:
+      - "4000:4000"
     depends_on:
       - "mongo"
 
@@ -19,7 +27,7 @@ services:
     build:
       context: ./app
     ports:
-      - "4000:80"
+      - "3000:80"
     depends_on:
       - "backend"
 
