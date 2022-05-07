@@ -13,7 +13,6 @@ export class RecipesService {
 
   async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
     const recipe = await hydrateRecipe(createRecipeDto.url);
-    console.log(recipe);
     return new this.recipeModel(recipe).save();
   }
 
