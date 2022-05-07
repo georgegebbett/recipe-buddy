@@ -11,12 +11,13 @@ services:
       - mongo_db:/data/db
 
   backend:
-    image: ghcr.io/georgegebbett/recipe-buddy-frontend:latest
+    build: ./api
     depends_on:
       - "mongo"
 
   frontend:
-    image: ghcr.io/georgegebbett/recipe-buddy-backend:latest
+    build:
+      context: ./app
     ports:
       - "4000:80"
     depends_on:
