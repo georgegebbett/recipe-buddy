@@ -3,6 +3,7 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Recipe, RecipeDocument } from './schemas/recipe.schema';
+import { hydrateRecipe } from './scraper/recipeScraper';
 
 @Injectable()
 export class RecipesService {
@@ -11,7 +12,9 @@ export class RecipesService {
   ) {}
 
   async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
-    return new this.recipeModel(createRecipeDto).save();
+    const recipe = await hydrateRecipe(createRecipeDto.url);
+    console.log(recipe);
+    return new this.recipeModel(recipe).save();
   }
 
   findAll() {
