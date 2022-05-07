@@ -9,6 +9,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
       - mongo_db:/data/db
+    ports:
+      - "27017:27017"
 
   backend:
     build:
