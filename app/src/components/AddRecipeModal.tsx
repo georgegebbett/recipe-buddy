@@ -8,35 +8,28 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { useAtom } from "jotai";
-import { tokenAtom } from "../App";
-import { post } from "../helpers/backendRequests";
 
 interface propTypes {
   modalOpen: boolean;
   setModalOpen: Function;
-  getRecipes: Function;
+  addRecipe: Function;
 }
 
 export function AddRecipeModal({
   modalOpen,
   setModalOpen,
-  getRecipes,
+  addRecipe,
 }: propTypes) {
   const [newRecipeUrl, setNewRecipeUrl] = useState("");
-
-  const [token] = useAtom(tokenAtom);
 
   const handleClose = () => {
     setNewRecipeUrl("");
     setModalOpen(false);
   };
 
-  const addRecipe = async () => {
-    await post("/recipes", { url: newRecipeUrl }, token.access_token);
-
-    getRecipes();
-    handleClose();
+  const addRecipeAndClose = () => {
+    setNewRecipeUrl("");
+    addRecipe(newRecipeUrl);
   };
 
   return (
@@ -59,7 +52,7 @@ export function AddRecipeModal({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Close</Button>
-        <Button onClick={addRecipe}>Add recipe</Button>
+        <Button onClick={addRecipeAndClose}>Add recipe</Button>
       </DialogActions>
     </Dialog>
   );

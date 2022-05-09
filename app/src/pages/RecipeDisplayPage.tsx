@@ -17,12 +17,18 @@ import AddIcon from "@mui/icons-material/Add";
 import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
 import { tokenAtom } from "../App";
+import { post } from "../helpers/backendRequests";
+import { RecipeResultSnackBar } from "../components/RecipeResultSnackBar";
 
 export function RecipeDisplayPage() {
   const [token] = useAtom(tokenAtom);
 
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarIsError, setSnackbarIsError] = useState<boolean>(false);
+  const [snackbarErrorMessage, setSnackbarErrorMessage] = useState<string>("");
 
   const fabStyle = {
     position: "sticky",
@@ -36,8 +42,27 @@ export function RecipeDisplayPage() {
         Authorization: `Bearer ${token.access_token}`,
       },
     });
-
     setRecipes(data);
+  };
+
+  const addRecipe = async (newRecipeUrl: string) => {
+    setModalOpen(false);
+    try {
+      const { data } = await post(
+        "/recipes",
+        { url: newRecipeUrl },
+        token.access_token
+      );
+      console.log(data);
+      getRecipes();
+      setSnackbarIsError(false);
+      setSnackbarOpen(true);
+    } catch (e: any) {
+      console.log(e.response.data.message);
+      setSnackbarErrorMessage(e.response.data.message);
+      setSnackbarIsError(true);
+      setSnackbarOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -61,7 +86,13 @@ export function RecipeDisplayPage() {
           <AddRecipeModal
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
-            getRecipes={getRecipes}
+            addRecipe={addRecipe}
+          />
+          <RecipeResultSnackBar
+            open={snackbarOpen}
+            error={snackbarIsError}
+            errorMessage={snackbarErrorMessage}
+            handleClose={() => setSnackbarOpen(false)}
           />
           <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Stack spacing={2}>
@@ -82,7 +113,3 @@ export function RecipeDisplayPage() {
     </ThemeProvider>
   );
 }
-
-// interface propTypes {
-//   tokenAtom: Atom<any>;
-// }
