@@ -25,13 +25,13 @@ services:
     depends_on:
       - "mongo"
 
-  frontend:
-    build:
-      context: ./app
-    ports:
-      - "3000:80"
-    depends_on:
-      - "backend"
+#  frontend:
+#    build:
+#      context: ./app
+#    ports:
+#      - "3000:80"
+#    depends_on:
+#      - "backend"
 
 volumes:
   mongo_db:
