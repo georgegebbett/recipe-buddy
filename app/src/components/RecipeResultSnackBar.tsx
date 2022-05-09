@@ -1,4 +1,4 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, AlertTitle, Snackbar } from "@mui/material";
 
 interface PropTypes {
   open: boolean;
@@ -17,11 +17,10 @@ export function RecipeResultSnackBar(props: PropTypes) {
       onClose={handleClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
-      {error ? (
-        <Alert severity="error">{errorMessage}</Alert>
-      ) : (
-        <Alert severity="success">Recipe added successfully</Alert>
-      )}
+      <Alert severity={error ? "error" : "success"} onClose={handleClose}>
+        <AlertTitle>{error ? "Error adding recipe" : "Success"}</AlertTitle>
+        {error ? errorMessage : "Recipe added successfully"}
+      </Alert>
     </Snackbar>
   );
 }
