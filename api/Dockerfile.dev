@@ -1,11 +1,5 @@
 FROM node:16-alpine
 
-#COPY ./package.json .
-#COPY ./tsconfig.build.json .
-#COPY ./tsconfig.json .
-
-#RUN npm install
-
 WORKDIR /api
 
 EXPOSE 4000
