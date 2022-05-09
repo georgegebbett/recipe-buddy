@@ -48,17 +48,11 @@ export function RecipeDisplayPage() {
   const addRecipe = async (newRecipeUrl: string) => {
     setModalOpen(false);
     try {
-      const { data } = await post(
-        "/recipes",
-        { url: newRecipeUrl },
-        token.access_token
-      );
-      console.log(data);
+      await post("/recipes", { url: newRecipeUrl }, token.access_token);
       getRecipes();
       setSnackbarIsError(false);
       setSnackbarOpen(true);
     } catch (e: any) {
-      console.log(e.response.data.message);
       setSnackbarErrorMessage(e.response.data.message);
       setSnackbarIsError(true);
       setSnackbarOpen(true);
