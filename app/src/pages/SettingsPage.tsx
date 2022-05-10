@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Box,
   Button,
   Container,
+  Input,
   Paper,
   Stack,
   TextField,
@@ -24,6 +25,8 @@ export function SettingsPage() {
   const [grocyApiKey, setGrocyApiKey] = useState<string>("");
   const [grocySettingsCorrect, setGrocySettingsCorrect] =
     useState<boolean>(false);
+
+  const [uploadFile, setUploadFile] = useState<File>();
 
   const navigate = useNavigate();
 
@@ -85,6 +88,25 @@ export function SettingsPage() {
     getCurrentSettings();
   }, []);
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    setUploadFile(e.target.files[0]);
+  };
+
+  const onFileUpload = async () => {
+    if (!uploadFile) return;
+
+    const formData = new FormData();
+
+    formData.append("file", uploadFile, uploadFile.name);
+
+    await axios.post("/api/import/upload", formData, {
+      headers: {
+        Authorization: `Bearer ${token.access_token}`,
+      },
+    });
+  };
+
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
@@ -132,10 +154,11 @@ export function SettingsPage() {
               </Paper>
               <Paper>
                 <Box sx={{ p: 2 }}>
-                  <Typography variant="h6">System info</Typography>
-                  <Typography variant="body1">
-                    Backend available at {import.meta.env.VITE_BACKEND_BASE_URL}
+                  <Typography variant="h6">
+                    Import recipes from Tandoor
                   </Typography>
+                  <Input type="file" onChange={handleFileChange} />
+                  <Button onClick={onFileUpload}>Upload</Button>
                 </Box>
               </Paper>
             </Stack>
