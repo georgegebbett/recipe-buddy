@@ -16,6 +16,10 @@ export class RecipesService {
     return new this.recipeModel(recipe).save();
   }
 
+  createHydratedRecipe(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
+    return new this.recipeModel(createRecipeDto).save();
+  }
+
   findAll() {
     return this.recipeModel.find().exec();
   }
