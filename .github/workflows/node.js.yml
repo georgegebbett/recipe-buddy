@@ -16,7 +16,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./api
+        working-directory: api
 
     strategy:
       matrix:
