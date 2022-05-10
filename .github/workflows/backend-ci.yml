@@ -6,6 +6,8 @@ name: Backend CI
 on:
   push:
     branches: [ master ]
+    paths:
+      - api/src/**
   pull_request:
     branches: [ master ]
 
