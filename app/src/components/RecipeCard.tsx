@@ -91,7 +91,9 @@ export function RecipeCard({ recipe, getRecipes }: RecipeProps) {
   return (
     <Card key={recipe._id} sx={{ maxWidth: 345, minHeight: 350 }}>
       <CardHeader title={recipe.name} />
-      <CardMedia height="190" component="img" image={recipe.imageUrl} />
+      {recipe.imageUrl ? (
+        <CardMedia height="190" component="img" image={recipe.imageUrl} />
+      ) : null}
       <CardContent>
         <Collapse in={expanded}>
           <RecipeIngredients ingredients={recipe.ingredients} />

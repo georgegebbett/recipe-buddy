@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { RolesGuard } from './auth/roles.guard';
 import { RecipesModule } from './recipes/recipes.module';
 import { GrocyModule } from './grocy/grocy.module';
+import { ImportModule } from './import/import.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { GrocyModule } from './grocy/grocy.module';
     UsersModule,
     RecipesModule,
     GrocyModule,
+    ImportModule,
   ],
   providers: [
     AppService,
