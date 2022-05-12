@@ -20,15 +20,21 @@ export class ImportService {
 
       for (const recipe of jsonObject) {
         this.recipesService.createHydratedRecipe({
-          url: 'cfcfg',
+          url: 'no url for imported recipe',
           name: recipe.name.toString(),
           ingredients: recipe.recipeIngredient.valueOf() as string[],
           steps: parseSteps(recipe.recipeInstructions.valueOf() as object[]),
         });
       }
-      return Promise.resolve('success');
+      return Promise.resolve({
+        statusCode: 201,
+        message: 'Recipes imported successfully',
+      });
     } catch (e) {
-      return Promise.reject(e);
+      return Promise.reject({
+        statusCode: 500,
+        message: e.message,
+      });
     }
   }
 }
