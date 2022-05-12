@@ -17,6 +17,7 @@ import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
 import { useNavigate } from "react-router-dom";
 import { tokenAtom } from "../App";
+import { ResultSnackBar } from "../components/ResultSnackBar";
 
 export function SettingsPage() {
   const [token, setToken] = useAtom(tokenAtom);
@@ -27,6 +28,14 @@ export function SettingsPage() {
     useState<boolean>(false);
 
   const [uploadFile, setUploadFile] = useState<File>();
+
+  const [snackBarOpen, setSnackBarOpen] = useState<boolean>(false);
+  const [snackBarError, setSnackBarError] = useState<boolean>(false);
+  const [snackbarErrorMessage, setSnackbarErrorMessage] = useState<string>("");
+
+  const handleSnackBarClose = () => {
+    setSnackBarOpen(false);
+  };
 
   const navigate = useNavigate();
 
@@ -94,17 +103,28 @@ export function SettingsPage() {
   };
 
   const onFileUpload = async () => {
-    if (!uploadFile) return;
+    if (!uploadFile) {
+      return;
+    }
 
     const formData = new FormData();
 
     formData.append("file", uploadFile, uploadFile.name);
 
-    await axios.post("/api/import/upload", formData, {
-      headers: {
-        Authorization: `Bearer ${token.access_token}`,
-      },
-    });
+    try {
+      await axios.post("/api/import/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${token.access_token}`,
+        },
+      });
+      setUploadFile(undefined);
+      setSnackBarError(false);
+      setSnackBarOpen(true);
+    } catch (e: any) {
+      setSnackBarOpen(true);
+      setSnackBarError(true);
+      setSnackbarErrorMessage(e.response.data.message);
+    }
   };
 
   return (
@@ -157,8 +177,26 @@ export function SettingsPage() {
                   <Typography variant="h6">
                     Import recipes from Tandoor
                   </Typography>
-                  <Input type="file" onChange={handleFileChange} />
-                  <Button onClick={onFileUpload}>Upload</Button>
+                  <Typography variant="body1">
+                    To import recipes from Tandoor, export your chosen recipes
+                    using the 'Saffron' export type, and upload the resulting
+                    JSON file here.
+                  </Typography>
+                  <Input
+                    type="file"
+                    onChange={handleFileChange}
+                    inputProps={{ accept: "application/json" }}
+                  />
+                  <Button onClick={onFileUpload} disabled={!uploadFile}>
+                    Upload
+                  </Button>
+                  <ResultSnackBar
+                    open={snackBarOpen}
+                    error={snackBarError}
+                    errorMessage={snackbarErrorMessage}
+                    successMessage="Recipes imported successfully"
+                    handleClose={handleSnackBarClose}
+                  />
                 </Box>
               </Paper>
             </Stack>

@@ -18,7 +18,7 @@ import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
 import { tokenAtom } from "../App";
 import { post } from "../helpers/backendRequests";
-import { RecipeResultSnackBar } from "../components/RecipeResultSnackBar";
+import { ResultSnackBar } from "../components/ResultSnackBar";
 
 export function RecipeDisplayPage() {
   const [token] = useAtom(tokenAtom);
@@ -82,10 +82,11 @@ export function RecipeDisplayPage() {
             setModalOpen={setModalOpen}
             addRecipe={addRecipe}
           />
-          <RecipeResultSnackBar
+          <ResultSnackBar
             open={snackbarOpen}
             error={snackbarIsError}
             errorMessage={snackbarErrorMessage}
+            successMessage="Recipe added successfully"
             handleClose={() => setSnackbarOpen(false)}
           />
           <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>

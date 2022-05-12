@@ -4,11 +4,12 @@ interface PropTypes {
   open: boolean;
   error: boolean;
   errorMessage: string;
+  successMessage: string;
   handleClose: () => void;
 }
 
-export function RecipeResultSnackBar(props: PropTypes) {
-  const { open, error, errorMessage, handleClose } = props;
+export function ResultSnackBar(props: PropTypes) {
+  const { open, error, errorMessage, successMessage, handleClose } = props;
 
   return (
     <Snackbar
@@ -18,8 +19,8 @@ export function RecipeResultSnackBar(props: PropTypes) {
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
     >
       <Alert severity={error ? "error" : "success"} onClose={handleClose}>
-        <AlertTitle>{error ? "Error adding recipe" : "Success"}</AlertTitle>
-        {error ? errorMessage : "Recipe added successfully"}
+        <AlertTitle>{error ? "Error" : "Success"}</AlertTitle>
+        {error ? errorMessage : successMessage}
       </Alert>
     </Snackbar>
   );
