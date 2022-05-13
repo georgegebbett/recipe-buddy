@@ -3,12 +3,13 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Recipe, RecipeDocument } from './schemas/recipe.schema';
-import { hydrateRecipe } from './scraper/recipeScraper';
+import { RecipeScraper } from './scraper/recipeScraper';
 
 @Injectable()
 export class RecipesService {
   constructor(
     @InjectModel(Recipe.name) private recipeModel: Model<RecipeDocument>,
+    private readonly recipeScraper: RecipeScraper,
   ) {}
 
   async create(createRecipeDto: CreateRecipeDto): Promise<Recipe> {
