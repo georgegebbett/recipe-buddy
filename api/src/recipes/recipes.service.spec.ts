@@ -3,6 +3,7 @@ import { RecipesService } from './recipes.service';
 import { Recipe, RecipeDocument } from './schemas/recipe.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { RecipeScraper } from './scraper/recipeScraper';
 
 const mockRecipe = (
   url = 'https://www.bbcgoodfood.com/recipes/bellini',
@@ -47,6 +48,7 @@ describe('RecipesService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RecipesService,
+        RecipeScraper,
         {
           provide: getModelToken('Recipe'),
           useValue: {
