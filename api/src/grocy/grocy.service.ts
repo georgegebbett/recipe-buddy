@@ -133,10 +133,11 @@ export class GrocyService {
         created_object_id,
         addRecipeToGrocyDto.ingredients,
       );
-      await this.uploadPictureToGrocyAndAssociateWithRecipe(
-        addRecipeToGrocyDto.imageUrl,
-        created_object_id,
-      );
+      if (addRecipeToGrocyDto.imageUrl)
+        await this.uploadPictureToGrocyAndAssociateWithRecipe(
+          addRecipeToGrocyDto.imageUrl,
+          created_object_id,
+        );
     } catch (e) {
       throw new HttpException(e.message, 500);
     }
