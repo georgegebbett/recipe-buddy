@@ -6,6 +6,8 @@ import { Recipe } from '../schemas/recipe.schema';
 describe('RecipeScraper', () => {
   let scraper: RecipeScraper;
 
+  let testVar;
+
   const belliniUrl = 'https://www.bbcgoodfood.com/recipes/bellini';
 
   const mockNodeList = (
