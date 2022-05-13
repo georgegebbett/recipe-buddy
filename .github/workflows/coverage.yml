@@ -16,3 +16,4 @@ jobs:
               with: 
                   working-directory: /api
                   package-manager: yarn
+                  test-script: npm test
