@@ -51,23 +51,34 @@ export class RecipeScraper {
 
       if (Array.isArray(parsedNodeContent)) {
         for (const metadataObject of parsedNodeContent) {
-          if (
-            metadataObject.hasOwnProperty('@type') &&
-            /recipe/i.test(metadataObject['@type'])
-          ) {
+          if (this.jsonObjectIsRecipe(metadataObject)) {
             return metadataObject;
           }
         }
       } else {
-        if (
-          parsedNodeContent.hasOwnProperty('@type') &&
-          /recipe/i.test(parsedNodeContent['@type'])
-        ) {
+        if (this.jsonObjectIsRecipe(parsedNodeContent)) {
           return parsedNodeContent;
+        }
+        if (this.jsonObjectHasGraph(parsedNodeContent)) {
+          for (const graphNode of parsedNodeContent['@graph']) {
+            if (this.jsonObjectIsRecipe(graphNode)) {
+              return graphNode;
+            }
+          }
         }
       }
     }
     throw new Error('Unable to extract Recipe metadata from provided url');
+  }
+
+  jsonObjectIsRecipe(jsonObject: object): boolean {
+    return (
+      jsonObject.hasOwnProperty('@type') && /recipe/i.test(jsonObject['@type'])
+    );
+  }
+
+  jsonObjectHasGraph(jsonObject: object): boolean {
+    return jsonObject.hasOwnProperty('@graph');
   }
 
   async hydrateRecipe(url: string) {
