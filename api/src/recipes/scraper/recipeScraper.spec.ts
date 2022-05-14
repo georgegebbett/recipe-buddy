@@ -88,30 +88,30 @@ describe('RecipeScraper', () => {
     ]);
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains a single recipe object', async function () {
+  it('should be able to return a recipe object from a url where the page metadata contains a single recipe object', function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList());
 
-    expect(await scraper.hydrateRecipe(belliniUrl)).toEqual(mockRecipe());
+    expect(scraper.hydrateRecipe(belliniUrl)).resolves.toEqual(mockRecipe());
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains an array of objects and one is a Recipe', async function () {
+  it('should be able to return a recipe object from a url where the page metadata contains an array of objects and one is a Recipe', function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList(allRecipesDomString));
 
-    expect(await scraper.hydrateRecipe(allRecipesUrl)).toEqual(
+    expect(scraper.hydrateRecipe(allRecipesUrl)).resolves.toEqual(
       allRecipesRecipe,
     );
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains a graph containing a recipe object', async function () {
+  it('should be able to return a recipe object from a url where the page metadata contains a graph containing a recipe object', function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList(yoastDomString));
 
-    expect(await scraper.hydrateRecipe(yoastUrl)).toEqual(yoastRecipe);
+    expect(scraper.hydrateRecipe(yoastUrl)).resolves.toEqual(yoastRecipe);
   });
 
   afterEach(() => {
