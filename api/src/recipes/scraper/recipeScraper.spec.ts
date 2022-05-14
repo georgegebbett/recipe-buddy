@@ -1,6 +1,10 @@
 import { RecipeScraper } from './recipeScraper';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  allRecipesDomString,
+  allRecipesMetadataObject,
+  allRecipesRecipe,
+  allRecipesUrl,
   belliniMetadataObject,
   belliniUrl,
   mockNodeList,
@@ -39,6 +43,12 @@ describe('RecipeScraper', () => {
     expect(scraper.getSchemaRecipeFromNodeList(mockNodeList())).toEqual(
       belliniMetadataObject,
     );
+  });
+
+  it('should extract the Recipe object from a NodeList when the metadata is an array of objects', function () {
+    expect(
+      scraper.getSchemaRecipeFromNodeList(mockNodeList(allRecipesDomString)),
+    ).toEqual(allRecipesMetadataObject);
   });
 
   it('should extract a Recipe object from a NodeList where the metadata is a graph', function () {
@@ -84,6 +94,16 @@ describe('RecipeScraper', () => {
       .mockResolvedValueOnce(mockNodeList());
 
     expect(await scraper.hydrateRecipe(belliniUrl)).toEqual(mockRecipe());
+  });
+
+  it('should be able to return a recipe object from a url where the page metadata contains an array of objects and one is a Recipe', async function () {
+    jest
+      .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
+      .mockResolvedValueOnce(mockNodeList(allRecipesDomString));
+
+    expect(await scraper.hydrateRecipe(allRecipesUrl)).toEqual(
+      allRecipesRecipe,
+    );
   });
 
   it('should be able to return a recipe object from a url where the page metadata contains a graph containing a recipe object', async function () {
