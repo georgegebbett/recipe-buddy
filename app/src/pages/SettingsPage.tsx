@@ -152,14 +152,22 @@ export function SettingsPage() {
                       value={grocyBaseUrl}
                       onChange={(e) => setGrocyBaseUrl(e.target.value)}
                       margin="dense"
+                      required
+                      type="url"
                     />
                     <TextField
                       label="Grocy API Key"
                       value={grocyApiKey}
                       onChange={(e) => setGrocyApiKey(e.target.value)}
                       margin="dense"
+                      required
                     />
-                    <Button onClick={updateSettings}>Update</Button>
+                    <Button
+                      onClick={updateSettings}
+                      disabled={grocyBaseUrl === "" || grocyApiKey === ""}
+                    >
+                      Update
+                    </Button>
                     {grocySettingsCorrect
                       ? "Connected to Grocy"
                       : "Cannot connect to Grocy"}
