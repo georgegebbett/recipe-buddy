@@ -152,12 +152,14 @@ export function SettingsPage() {
                       value={grocyBaseUrl}
                       onChange={(e) => setGrocyBaseUrl(e.target.value)}
                       margin="dense"
+                      required
                     />
                     <TextField
                       label="Grocy API Key"
                       value={grocyApiKey}
                       onChange={(e) => setGrocyApiKey(e.target.value)}
                       margin="dense"
+                      required
                     />
                     <Button onClick={updateSettings}>Update</Button>
                     {grocySettingsCorrect
