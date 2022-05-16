@@ -162,7 +162,12 @@ export function SettingsPage() {
                       margin="dense"
                       required
                     />
-                    <Button onClick={updateSettings}>Update</Button>
+                    <Button
+                      onClick={updateSettings}
+                      disabled={grocyBaseUrl === "" || grocyApiKey === ""}
+                    >
+                      Update
+                    </Button>
                     {grocySettingsCorrect
                       ? "Connected to Grocy"
                       : "Cannot connect to Grocy"}
