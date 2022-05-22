@@ -28,7 +28,7 @@ export function SetupPage() {
         password: password,
       });
       console.log(data);
-      navigate("/recipes");
+      navigate("/");
     } catch (e) {
       console.log(e);
     }
