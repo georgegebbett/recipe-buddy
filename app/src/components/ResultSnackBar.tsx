@@ -16,7 +16,7 @@ export function ResultSnackBar(props: PropTypes) {
       open={open}
       autoHideDuration={5000}
       onClose={handleClose}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <Alert severity={error ? "error" : "success"} onClose={handleClose}>
         <AlertTitle>{error ? "Error" : "Success"}</AlertTitle>
