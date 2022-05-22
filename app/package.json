@@ -1,7 +1,7 @@
 {
-  "name": "app",
+  "name": "recipe_buddy",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.4",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
