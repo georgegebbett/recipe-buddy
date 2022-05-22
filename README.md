@@ -29,3 +29,4 @@ Well, dear reader, as I am a benevolent goblin-wrangler, I have imprisoned them 
 I am not (yet) a professional software engineer. I certainly do not profess to be any good at this stuff. I hereby abdicate any responsibility for the misbehaviour of the TypeScript goblins. If you think you can do better, then open a PR and I will almost certainly merge it without question. 
 
 Lots of love, George xoxoxoxo
+wedw
