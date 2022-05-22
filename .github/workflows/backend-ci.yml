@@ -10,6 +10,8 @@ on:
       - api/src/**
   pull_request:
     branches: [ master ]
+    paths:
+      - api/src/**
 
 jobs:
   build:
