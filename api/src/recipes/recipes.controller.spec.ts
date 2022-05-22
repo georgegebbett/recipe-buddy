@@ -30,11 +30,11 @@ describe('RecipesController', () => {
   });
 
   describe('getById', () => {
-    it('should return a single recipe', () => {
-      expect(recipesController.findOne('1')).resolves.toEqual({
+    it('should return a single recipe', async () => {
+      await expect(recipesController.findOne('1')).resolves.toEqual({
         _id: '1',
       });
-      expect(recipesController.findOne('2')).resolves.toEqual({
+      await expect(recipesController.findOne('2')).resolves.toEqual({
         _id: '2',
       });
     });

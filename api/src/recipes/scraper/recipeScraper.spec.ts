@@ -36,7 +36,7 @@ describe('RecipeScraper', () => {
     const foundNodeList = await scraper.getNodeListOfMetadataNodesFromUrl(
       belliniUrl,
     );
-    expect(foundNodeList).toEqual(mockNodeList());
+    await expect(foundNodeList).toEqual(mockNodeList());
   });
 
   it('should extract the Recipe object from a NodeList', function () {
@@ -88,30 +88,32 @@ describe('RecipeScraper', () => {
     ]);
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains a single recipe object', function () {
+  it('should be able to return a recipe object from a url where the page metadata contains a single recipe object', async function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList());
 
-    expect(scraper.hydrateRecipe(belliniUrl)).resolves.toEqual(mockRecipe());
+    await expect(scraper.hydrateRecipe(belliniUrl)).resolves.toEqual(
+      mockRecipe(),
+    );
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains an array of objects and one is a Recipe', function () {
+  it('should be able to return a recipe object from a url where the page metadata contains an array of objects and one is a Recipe', async function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList(allRecipesDomString));
 
-    expect(scraper.hydrateRecipe(allRecipesUrl)).resolves.toEqual(
+    await expect(scraper.hydrateRecipe(allRecipesUrl)).resolves.toEqual(
       allRecipesRecipe,
     );
   });
 
-  it('should be able to return a recipe object from a url where the page metadata contains a graph containing a recipe object', function () {
+  it('should be able to return a recipe object from a url where the page metadata contains a graph containing a recipe object', async function () {
     jest
       .spyOn(scraper, 'getNodeListOfMetadataNodesFromUrl')
       .mockResolvedValueOnce(mockNodeList(yoastDomString));
 
-    expect(scraper.hydrateRecipe(yoastUrl)).resolves.toEqual(yoastRecipe);
+    await expect(scraper.hydrateRecipe(yoastUrl)).resolves.toEqual(yoastRecipe);
   });
 
   afterEach(() => {
