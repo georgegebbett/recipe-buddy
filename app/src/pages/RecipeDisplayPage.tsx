@@ -31,9 +31,10 @@ export function RecipeDisplayPage() {
   const [snackbarErrorMessage, setSnackbarErrorMessage] = useState<string>("");
 
   const fabStyle = {
-    position: "sticky",
-    right: 16,
-    bottom: 16,
+    float: "right",
+    position: "absolute",
+    right: 30,
+    bottom: 30,
   };
 
   const getRecipes = async () => {
