@@ -38,3 +38,30 @@ pull_request_rules:
       queue:
         name: default
         method: rebase
+  - name: >-
+      merge approved major version changes
+    conditions:
+      - 'author~=^dependabot(|-preview)\[bot\]$'
+      - check-success=GitGuardian Security Checks
+      - check-success=CodeQL
+      - approved-reviews-by=georgegebbett
+    actions:
+      label:
+        add:
+          - manually-approved
+      queue:
+        name: default
+        method: rebase
+  - name: >-
+      ask for review on dependabot PRs where there is a major version change
+    conditions:
+      - 'author~=^dependabot(|-preview)\[bot\]$'
+      - check-success=GitGuardian Security Checks
+      - check-success=CodeQL
+    actions:
+      label:
+        add:
+          - dependancy-major-version
+      request_reviews:
+        users:
+            - georgegebbett
