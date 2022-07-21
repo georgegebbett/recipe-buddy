@@ -12,7 +12,7 @@ pull_request_rules:
       - 'title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.'
       - check-success=GitGuardian Security Checks
       - check-success=CodeQL
-      - check-success=Build and Test (12.x)
+      - check-success=Build and Test (18.x)
       - check-success=Build and Test (14.x)
       - check-success=Build and Test (16.x)
     actions:
