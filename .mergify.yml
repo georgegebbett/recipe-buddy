@@ -1,3 +1,7 @@
+queue_rules:
+  - name: default
+    conditions: []
+
 pull_request_rules:
   - name: >-
       automatic merge for backend Dependabot pull requests where there is no
@@ -15,7 +19,8 @@ pull_request_rules:
       label:
         add:
           - backend
-      merge:
+      queue:
+        name: default
         method: rebase
   - name: >-
       automatic merge for frontend Dependabot pull requests where there is no
@@ -30,5 +35,6 @@ pull_request_rules:
       label:
         add:
           - frontend
-      merge:
+      queue:
+        name: default
         method: rebase
