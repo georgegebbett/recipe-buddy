@@ -38,7 +38,7 @@
     "rand-token": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
+    "rxjs": "^7.5.6",
     "schema-dts": "^1.1.0"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.30.7",
+    "@typescript-eslint/parser": "^5.31.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
