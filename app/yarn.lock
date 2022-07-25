@@ -1666,10 +1666,10 @@ jest-matcher-utils@^27.0.0:
     jest-get-type "^27.5.1"
     pretty-format "^27.5.1"
 
-jotai@^1.6.1:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.6.4.tgz#4d9904362c53c4293d32e21fb358d3de34b82912"
-  integrity sha512-XC0ExLhdE6FEBdIjKTe6kMlHaAUV/QiwN7vZond76gNr/WdcdonJOEW79+5t8u38sR41bJXi26B1dRi7cCRz9A==
+jotai@^1.7.6:
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.7.6.tgz#234165b0b139e11ef40e660e8fa1b420b23bb24b"
+  integrity sha512-D3R5f6OvwUPUyTPQY3wGP800nb6bDEOl/mqftjxg3gcHVITeFcldr9W9IBK+gXsow357vhNXuci/LfD+rl92PA==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
