@@ -65,16 +65,20 @@ export function AddToGrocyPage() {
   };
 
   async function retrieveRecipe() {
-    const { data } = await axios.get(`/api/recipes/${params.id}`, {
-      headers: {
-        Authorization: `Bearer ${token.access_token}`,
-      },
-    });
-    setRecipe(data);
-    setRecipeLoaded(true);
-    data.ingredients.forEach((value: Ingredient, index: number) =>
-      updateMasterMap(index, {})
-    );
+    try {
+      const { data } = await axios.get(`/api/recipes/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token.access_token}`,
+        },
+      });
+      setRecipe(data);
+      setRecipeLoaded(true);
+      data.ingredients.forEach((value: Ingredient, index: number) =>
+        updateMasterMap(index, {})
+      );
+    } catch (e) {
+      alert(e);
+    }
   }
 
   async function getProducts() {
@@ -230,7 +234,7 @@ export function AddToGrocyPage() {
             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
               {isLoaded ? (
                 <Fragment>
-                  <h1>Add recipe {params.id} to Grocy</h1>
+                  <h1>Add recipe to Grocy</h1>
                   <TextField
                     required
                     label="Recipe Name"
