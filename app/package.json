@@ -13,7 +13,7 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.9.3",
     "@fontsource/roboto": "^4.5.7",
-    "@mui/icons-material": "^5.6.1",
+    "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.2",
     "axios": "^0.27.2",
     "jotai": "^1.7.6",
