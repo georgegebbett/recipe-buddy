@@ -164,7 +164,7 @@ export function IngredientRow(props: PropTypes) {
   };
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && products) {
       setGrocyProductId(products[0].id);
       // @ts-ignore
       setQuantity(ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : "");
