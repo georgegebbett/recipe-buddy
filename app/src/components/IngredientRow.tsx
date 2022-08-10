@@ -52,6 +52,7 @@ export function IngredientRow(props: PropTypes) {
   const [quantityUnitId, setQuantityUnitId] = useState<string>("");
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const [isIgnored, setIsIgnored] = useState<boolean>(false);
+  const [noProducts, setNoProducts] = useState<boolean>(false);
 
   const [isReadyToRender, setIsReadyToRender] = useState<boolean>(false);
 
@@ -164,10 +165,13 @@ export function IngredientRow(props: PropTypes) {
   };
 
   useEffect(() => {
-    if (isLoaded && products) {
+    if (isLoaded && products.length !== 0) {
       setGrocyProductId(products[0].id);
       // @ts-ignore
       setQuantity(ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : "");
+      setIsReadyToRender(true);
+    } else if (products.length === 0) {
+      setNoProducts(true);
       setIsReadyToRender(true);
     }
   }, [isLoaded]);
@@ -178,74 +182,84 @@ export function IngredientRow(props: PropTypes) {
   }, [grocyProductId]);
 
   return isReadyToRender ? (
-    <TableRow key={index}>
-      <TableCell>{ingredient}</TableCell>
-      <TableCell>
-        <Autocomplete
-          disabled={isConfirmed || isIgnored}
-          options={products}
-          getOptionLabel={(product) => product.name}
-          renderInput={(params) => <TextField {...params} label="Product" />}
-          onChange={handleAutocompleteChange}
-          value={products.filter((product) => product.id === grocyProductId)[0]}
-          disableClearable
-          sx={{ minWidth: 200 }}
-        />
-      </TableCell>
-      <TableCell>
-        <Input
-          value={quantity}
-          onChange={(event) => setQuantity(event.target.value)}
-          placeholder={
-            //@ts-ignore
-            ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : ""
-          }
-          disabled={isConfirmed || isIgnored}
-        />
-      </TableCell>
-      <TableCell>
-        <Checkbox
-          checked={useAnyUnit}
-          onChange={toggleAnyUnit}
-          disabled={isConfirmed || isIgnored}
-        />
-      </TableCell>
-      <TableCell>
-        {useAnyUnit ? (
-          <QuantityUnitDropdown disabled={isConfirmed || isIgnored} />
-        ) : (
-          <QuantityUnitDropdown disabled={true} />
-        )}
-      </TableCell>
+    noProducts ? (
+      <TableRow>
+        <TableCell colSpan={7} align="center">
+          You must add products to Grocy before using Recipe Buddy
+        </TableCell>
+      </TableRow>
+    ) : (
+      <TableRow key={index}>
+        <TableCell>{ingredient}</TableCell>
+        <TableCell>
+          <Autocomplete
+            disabled={isConfirmed || isIgnored}
+            options={products}
+            getOptionLabel={(product) => product.name}
+            renderInput={(params) => <TextField {...params} label="Product" />}
+            onChange={handleAutocompleteChange}
+            value={
+              products.filter((product) => product.id === grocyProductId)[0]
+            }
+            disableClearable
+            sx={{ minWidth: 200 }}
+          />
+        </TableCell>
+        <TableCell>
+          <Input
+            value={quantity}
+            onChange={(event) => setQuantity(event.target.value)}
+            placeholder={
+              //@ts-ignore
+              ingredient.match(/^\d+/) ? ingredient.match(/^\d+/)[0] : ""
+            }
+            disabled={isConfirmed || isIgnored}
+          />
+        </TableCell>
+        <TableCell>
+          <Checkbox
+            checked={useAnyUnit}
+            onChange={toggleAnyUnit}
+            disabled={isConfirmed || isIgnored}
+          />
+        </TableCell>
+        <TableCell>
+          {useAnyUnit ? (
+            <QuantityUnitDropdown disabled={isConfirmed || isIgnored} />
+          ) : (
+            <QuantityUnitDropdown disabled={true} />
+          )}
+        </TableCell>
 
-      <TableCell>
-        <Button
-          onClick={() => createProduct(ingredient)}
-          disabled={isConfirmed || isIgnored}
-        >
-          Create Product
-        </Button>
-      </TableCell>
-      <TableCell>
-        <Button
-          onClick={handleConfirm}
-          disabled={isIgnored}
-          color="success"
-          variant="contained"
-        >
-          {isConfirmed ? "Confirmed" : "Confirm"}
-        </Button>
-      </TableCell>
-      <TableCell>
-        <Button
-          onClick={handleIgnore}
-          disabled={isConfirmed}
-          color="error"
-          variant="contained"
-        >
-          {isIgnored ? "Ignored" : "Ignore"}
-        </Button>
-      </TableCell>
-    </TableRow>
+        <TableCell>
+          <Button
+            onClick={() => createProduct(ingredient)}
+            disabled={isConfirmed || isIgnored}
+          >
+            Create Product
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            onClick={handleConfirm}
+            disabled={isIgnored}
+            color="success"
+            variant="contained"
+          >
+            {isConfirmed ? "Confirmed" : "Confirm"}
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button
+            onClick={handleIgnore}
+            disabled={isConfirmed}
+            color="error"
+            variant="contained"
+          >
+            {isIgnored ? "Ignored" : "Ignore"}
+          </Button>
+        </TableCell>
+      </TableRow>
+    )
   ) : null;
 }
