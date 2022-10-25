@@ -4,12 +4,9 @@ queue_rules:
 
 pull_request_rules:
   - name: >-
-      automatic merge for backend Dependabot pull requests where there is no
-      major version change
+      automatic merge for  Dependabot pull requests
     conditions:
-      - files~=^api/
       - 'author~=^dependabot(|-preview)\[bot\]$'
-      - 'title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.'
       - check-success=GitGuardian Security Checks
       - check-success=CodeQL
       - check-success=Build and Test (18.x)
@@ -22,46 +19,4 @@ pull_request_rules:
       queue:
         name: default
         method: rebase
-  - name: >-
-      automatic merge for frontend Dependabot pull requests where there is no
-      major version change
-    conditions:
-      - files~=^app/
-      - 'author~=^dependabot(|-preview)\[bot\]$'
-      - 'title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.'
-      - check-success=GitGuardian Security Checks
-      - check-success=CodeQL
-    actions:
-      label:
-        add:
-          - frontend
-      queue:
-        name: default
-        method: rebase
-  - name: >-
-      merge approved major version changes
-    conditions:
-      - 'author~=^dependabot(|-preview)\[bot\]$'
-      - check-success=GitGuardian Security Checks
-      - check-success=CodeQL
-      - approved-reviews-by=georgegebbett
-    actions:
-      label:
-        add:
-          - manually-approved
-      queue:
-        name: default
-        method: rebase
-  - name: >-
-      ask for review on dependabot PRs where there is a major version change
-    conditions:
-      - 'author~=^dependabot(|-preview)\[bot\]$'
-      - check-success=GitGuardian Security Checks
-      - check-success=CodeQL
-    actions:
-      label:
-        add:
-          - dependancy-major-version
-      request_reviews:
-        users:
-            - georgegebbett
+ 
