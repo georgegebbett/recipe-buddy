@@ -9,7 +9,9 @@ on:
     paths:
       - api/**
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - develop
     paths:
       - api/**
 
