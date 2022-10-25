@@ -1,14 +1,12 @@
-queue_rules:
-  - name: default
-    conditions: []
-
 pull_request_rules:
   - name: >-
-      automatic merge for  Dependabot pull requests
+      automatic merge for backend Dependabot pull requests where there is no
+      major version change
     conditions:
+      - files~=^api/
       - 'author~=^dependabot(|-preview)\[bot\]$'
       - check-success=GitGuardian Security Checks
-      - check-success=CodeQL
+      - check-success=SonarCloud
       - check-success=Build and Test (18.x)
       - check-success=Build and Test (14.x)
       - check-success=Build and Test (16.x)
@@ -19,4 +17,18 @@ pull_request_rules:
       queue:
         name: default
         method: rebase
- 
+  - name: >-
+      automatic merge for frontend Dependabot pull requests where there is no
+      major version change
+    conditions:
+      - files~=^app/
+      - 'author~=^dependabot(|-preview)\[bot\]$'
+      - check-success=GitGuardian Security Checks
+      - check-success=SonarCloud
+    actions:
+      label:
+        add:
+          - frontend
+      queue:
+        name: default
+        method: rebase
