@@ -1529,10 +1529,10 @@ jest-matcher-utils@^27.0.0:
     jest-get-type "^27.5.1"
     pretty-format "^27.5.1"
 
-jotai@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.9.0.tgz#488aac16fb5b527e2af2efd76d28768ec1fd0386"
-  integrity sha512-XYpSlxbxujUCTA8PNkzfj3+zF6XVyzo6XMZIEic3gXQCpTDPfmqhUj2FR8kwUACK5weosFrSBhesrjwfILUCoQ==
+jotai@^1.9.2:
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.9.2.tgz#708990083e98b03ba41131a67acdbb681c278510"
+  integrity sha512-/893WrniZwoVc0+3JR056r0FTC/tGbgyHco9dfgde6K8TU6XNxrOSw4jCRdDicncw67A37v2GNGzXSpHKbHPmw==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
