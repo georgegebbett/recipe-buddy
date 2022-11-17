@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { AddRecipeToGrocyDto } from './dto/add-recipe-to-grocy.dto';
 import axios from 'axios';
 import { uid } from 'rand-token';
@@ -17,6 +17,7 @@ interface RequestWithUserInfo extends Request {
 
 @Injectable()
 export class GrocyService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     private readonly usersService: UsersService,
     private readonly recipesService: RecipesService,
@@ -29,7 +30,7 @@ export class GrocyService {
     `<ol>${steps.map((step) => `<li>${step}</li>`).join(' ')}</ol>`;
 
   async createRecipeInGrocy(name: string, steps: string[]) {
-    console.log(name);
+    this.logger.log(name);
     const parsedSteps = this.parseSteps(steps);
 
     try {
@@ -45,7 +46,7 @@ export class GrocyService {
           },
         },
       );
-      console.log(data);
+      this.logger.log(data);
       return data;
     } catch (e) {
       throw e;
@@ -119,7 +120,7 @@ export class GrocyService {
     addRecipeToGrocyDto: AddRecipeToGrocyDto,
     req: RequestWithUserInfo,
   ): Promise<any> {
-    console.log(addRecipeToGrocyDto);
+    this.logger.log(addRecipeToGrocyDto);
     try {
       const userInfo = await this.usersService.findOneById(req.user.userId);
       this.grocyBase = userInfo.grocyBaseUrl;

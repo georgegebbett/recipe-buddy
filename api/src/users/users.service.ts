@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -8,6 +8,7 @@ import axios from 'axios';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async setup(createUserDto: CreateUserDto): Promise<User> {
@@ -60,17 +61,18 @@ export class UsersService {
   }
 
   async findOneByIdAndUpdate(id: string, updateUserDto: UpdateUserDto) {
+    const grocyUrl = updateUserDto.grocyBaseUrl.endsWith('/')
+      ? updateUserDto.grocyBaseUrl.slice(0, -1)
+      : updateUserDto.grocyBaseUrl;
     try {
-      const { data } = await axios.get(
-        `${updateUserDto.grocyBaseUrl}/api/system/info`,
-        {
-          headers: {
-            'GROCY-API-KEY': updateUserDto.grocyApiKey,
-          },
+      const { data } = await axios.get(`${grocyUrl}/api/system/info`, {
+        headers: {
+          'GROCY-API-KEY': updateUserDto.grocyApiKey,
         },
-      );
-      console.log(data);
+      });
+      this.logger.log(data);
     } catch (e) {
+      this.logger.log(e);
       throw new HttpException(
         'Incorrect Grocy Credentials',
         HttpStatus.UNAUTHORIZED,
@@ -79,7 +81,7 @@ export class UsersService {
 
     return this.userModel.findByIdAndUpdate(id, {
       $set: {
-        grocyBaseUrl: updateUserDto.grocyBaseUrl,
+        grocyBaseUrl: grocyUrl,
         grocyApiKey: updateUserDto.grocyApiKey,
       },
     });

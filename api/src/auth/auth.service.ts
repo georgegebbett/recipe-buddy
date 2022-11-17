@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { uid } from 'rand-token';
@@ -6,6 +6,7 @@ import { refreshTokenSize } from './constants';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -46,7 +47,7 @@ export class AuthService {
 
   async refreshToken(refresh_token: string, username: string) {
     const user = await this.usersService.findOneByUsername(username);
-    console.log(user);
+    this.logger.log(user);
     if (refresh_token === user.refresh_token) {
       const newRefreshToken = this.generateRefreshToken();
       await this.usersService.setRefreshTokenByUsername(
