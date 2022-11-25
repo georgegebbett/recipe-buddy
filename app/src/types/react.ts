@@ -1,3 +1,3 @@
 import { FC, ReactNode } from 'react';
 
-export type FCWithChildren<T> = FC<T & {children: ReactNode}>
+export type FCWithChildren = FC<{children: ReactNode}>
