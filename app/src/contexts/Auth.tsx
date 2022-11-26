@@ -58,21 +58,15 @@ export const AuthProvider: FCWithChildren<{}> = ({children}) => {
       () => setState(initial),
       () => setState(pending),
       () => setState(success(AuthState.LoggedOut())),
-      (a) => {
-        localStorage.setItem('rb-token', a.access_token)
-        setState(success(AuthState.LoggedIn({
-          accessToken: a.access_token,
-          roles: a.roles,
-          name: a.username,
-        })));
-      }
+      (a) => setState(success(AuthState.LoggedIn({
+        accessToken: a.access_token,
+        roles: a.roles,
+        name: a.username,
+      })))
     )
   )
 
-  useEffect(() => {
-    const token = localStorage.getItem('rb-token')
-    console.log(`first run token is ${token}`);
-    execute('users/me', {headers: {Authorization: `Bearer ${token}`}})}, [])
+  useEffect(() => {execute('users/me')}, [])
   useEffect(() => {userState()}, [status])
 
   const loginReq = (username: string, password: string) => execute('auth/login', {
