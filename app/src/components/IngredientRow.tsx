@@ -94,8 +94,8 @@ export function IngredientRow(props: PropTypes) {
   }
 
   const QuantityUnitDropdown = ({
-    disabled,
-  }: QuantityUnitDropdownPropTypes) => (
+                                  disabled,
+                                }: QuantityUnitDropdownPropTypes) => (
     <Select
       onChange={(event: SelectChangeEvent) =>
         setQuantityUnitId(event.target.value)

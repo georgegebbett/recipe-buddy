@@ -219,7 +219,6 @@ export function AddToGrocyPage() {
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar />
         <Box
           component="main"
           sx={{

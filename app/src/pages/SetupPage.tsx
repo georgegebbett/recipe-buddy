@@ -50,7 +50,6 @@ export function SetupPage() {
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar />
         <Box
           component="main"
           sx={{

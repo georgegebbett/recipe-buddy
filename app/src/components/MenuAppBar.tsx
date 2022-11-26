@@ -19,6 +19,9 @@ import { Fragment, ReactNode, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { tokenAtom } from "../App";
+import { useAuth } from '../contexts/Auth';
+import { isReplete } from '@nll/datum/DatumEither';
+import { isRight } from 'fp-ts/Either';
 
 const drawerWidth: number = 240;
 
@@ -74,6 +77,10 @@ export default function MenuAppBar() {
   const [token, setToken] = useAtom(tokenAtom);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(true);
+
+  const {state} = useAuth()
+
+  const isLoggedIn = isReplete(state) && isRight(state.value) && state.value.right.tag === 'LoggedIn'
 
   // const handleMenu = (event: Event) => {
   //   setAnchorEl(event.currentTarget);
@@ -149,7 +156,7 @@ export default function MenuAppBar() {
           <ListItemButton
             component={Link}
             to="/recipes"
-            disabled={!token.access_token}
+            disabled={!isLoggedIn}
           >
             <ListItemIcon>
               <Book />
@@ -159,7 +166,7 @@ export default function MenuAppBar() {
           <ListItemButton
             component={Link}
             to="/settings"
-            disabled={!token.access_token}
+            disabled={!isLoggedIn}
           >
             <ListItemIcon>
               <Settings />

@@ -18,9 +18,19 @@ import MenuAppBar from "../components/MenuAppBar";
 import { useNavigate } from "react-router-dom";
 import { tokenAtom } from "../App";
 import { ResultSnackBar } from "../components/ResultSnackBar";
+import { useAuth } from '../contexts/Auth';
+import { isSuccess, refreshFold } from '@nll/datum/DatumEither';
+import { isRight } from 'fp-ts/Either';
+import { pipe } from 'fp-ts/lib/function';
+import { useUser } from '../contexts/User';
+import { useForm } from 'react-hook-form';
 
 export function SettingsPage() {
-  const [token, setToken] = useAtom(tokenAtom);
+  // const [token, setToken] = useAtom(tokenAtom);
+
+  const {logout} = useAuth()
+
+  const {user, grocy} = useUser()
 
   const [grocyBaseUrl, setGrocyBaseUrl] = useState<string>("");
   const [grocyApiKey, setGrocyApiKey] = useState<string>("");
@@ -39,63 +49,58 @@ export function SettingsPage() {
 
   const navigate = useNavigate();
 
+  type GrocyForm = {
+    apiKey: string
+    baseUrl: string
+  }
+
+  const {register, handleSubmit, formState} = useForm<GrocyForm>({
+    defaultValues: {
+      baseUrl: grocy.baseUrl,
+      apiKey: grocy.apiKey
+    }
+  })
+
   async function updateSettings() {
     if (!(grocyApiKey && grocyBaseUrl)) throw new Error("Fill in boxes pls");
 
-    try {
-      const { data } = await axios.put(
-        "/api/users",
-        {
-          grocyBaseUrl: grocyBaseUrl,
-          grocyApiKey: grocyApiKey,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token.access_token}`,
-          },
-        }
-      );
-      console.log(data);
-      setGrocySettingsCorrect(true);
-    } catch (e) {
-      console.log(e);
-      setGrocySettingsCorrect(false);
-    }
+    // try {
+    //   const { data } = await axios.put(
+    //     "/api/users",
+    //     {
+    //       grocyBaseUrl: grocyBaseUrl,
+    //       grocyApiKey: grocyApiKey,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token.access_token}`,
+    //       },
+    //     }
+    //   );
+    //   console.log(data);
+    //   setGrocySettingsCorrect(true);
+    // } catch (e) {
+    //   console.log(e);
+    //   setGrocySettingsCorrect(false);
+    // }
   }
 
   async function getCurrentSettings() {
-    try {
-      const { data } = await axios.get("/api/users/me", {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      });
-      console.log(data);
-      setGrocyBaseUrl(data.grocyBaseUrl);
-      setGrocyApiKey(data.grocyApiKey);
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   const { data } = await axios.get("/api/users/me", {
+    //     headers: {
+    //       Authorization: `Bearer ${token.access_token}`,
+    //     },
+    //   });
+    //   console.log(data);
+    //   setGrocyBaseUrl(data.grocyBaseUrl);
+    //   setGrocyApiKey(data.grocyApiKey);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 
-  async function logout() {
-    try {
-      await axios.delete("/api/auth/login", {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      });
-      // @ts-ignore
-      setToken({});
-      navigate("/");
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
-  useEffect(() => {
-    getCurrentSettings();
-  }, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -103,34 +108,35 @@ export function SettingsPage() {
   };
 
   const onFileUpload = async () => {
-    if (!uploadFile) {
-      return;
-    }
 
-    const formData = new FormData();
 
-    formData.append("file", uploadFile, uploadFile.name);
-
-    try {
-      await axios.post("/api/import/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      });
-      setUploadFile(undefined);
-      setSnackBarError(false);
-      setSnackBarOpen(true);
-    } catch (e: any) {
-      setSnackBarOpen(true);
-      setSnackBarError(true);
-      setSnackbarErrorMessage(e.response.data.message);
-    }
+    // if (!uploadFile) {
+    //   return;
+    // }
+    //
+    // const formData = new FormData();
+    //
+    // formData.append("file", uploadFile, uploadFile.name);
+    //
+    // try {
+    //   await axios.post("/api/import/upload", formData, {
+    //     headers: {
+    //       Authorization: `Bearer ${token.access_token}`,
+    //     },
+    //   });
+    //   setUploadFile(undefined);
+    //   setSnackBarError(false);
+    //   setSnackBarOpen(true);
+    // } catch (e: any) {
+    //   setSnackBarOpen(true);
+    //   setSnackBarError(true);
+    //   setSnackbarErrorMessage(e.response.data.message);
+    // }
   };
 
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar />
         <Box
           component="main"
           sx={{
@@ -146,28 +152,33 @@ export function SettingsPage() {
               <Paper>
                 <Box sx={{ p: 2 }}>
                   <Stack justifyContent="center">
-                    <Typography variant="h6">Grocy Settings</Typography>
-                    <TextField
-                      label="Grocy Base URL"
-                      value={grocyBaseUrl}
-                      onChange={(e) => setGrocyBaseUrl(e.target.value)}
-                      margin="dense"
-                      required
-                      type="url"
-                    />
-                    <TextField
-                      label="Grocy API Key"
-                      value={grocyApiKey}
-                      onChange={(e) => setGrocyApiKey(e.target.value)}
-                      margin="dense"
-                      required
-                    />
-                    <Button
-                      onClick={updateSettings}
-                      disabled={grocyBaseUrl === "" || grocyApiKey === ""}
-                    >
+                    <form onSubmit={handleSubmit(updateSettings)}>
+                      <TextField
+                        label="Grocy Base URL"
+                        // value={grocy.baseUrl}
+                        // onChange={(e) => setGrocyBaseUrl(e.target.value)}
+                        // margin="dense"
+                        // required
+                        // type="url"
+                        {...register("baseUrl", {required: true})}
+                      />
+                      <TextField
+                        label="Grocy API Key"
+                        // value={grocy.apiKey}
+                        // onChange={(e) => setGrocyApiKey(e.target.value)}
+                        // margin="dense"
+                        // required
+                        {...register("apiKey", {required: true})}
+                      />
+                      <Button
+                        type='submit'
+                        disabled={!formState.isValid}
+                      >
                       Update
                     </Button>
+                    </form>
+                    <Typography variant="h6">Grocy Settings</Typography>
+
                     {grocySettingsCorrect
                       ? "Connected to Grocy"
                       : "Cannot connect to Grocy"}

@@ -16,6 +16,7 @@ import { tokenAtom } from "../App";
 import { rbTheme } from "../styles/styles";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
+import { useAuth } from '../contexts/Auth';
 
 export function LoginPage() {
   const [username, setUsername] = useState<string>("");
@@ -23,21 +24,23 @@ export function LoginPage() {
 
   const navigate = useNavigate();
 
+  const {login} = useAuth()
+
   const [token, setToken] = useAtom(tokenAtom);
 
-  const login = async () => {
-    try {
-      const { data } = await axios.post("/api/auth/login", {
-        username: username,
-        password: password,
-      });
-      setToken(data);
-
-      navigate("/recipes");
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const login = async () => {
+  //   try {
+  //     const { data } = await axios.post("/api/auth/login", {
+  //       username: username,
+  //       password: password,
+  //     });
+  //     setToken(data);
+  //
+  //     navigate("/recipes");
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const checkIfSetup = async () => {
     try {
@@ -60,7 +63,6 @@ export function LoginPage() {
   return (
     <ThemeProvider theme={rbTheme}>
       <Box sx={{ display: "flex" }}>
-        <MenuAppBar />
         <Box
           component="main"
           sx={{
@@ -91,7 +93,7 @@ export function LoginPage() {
                     margin="dense"
                     required
                   />
-                  <Button onClick={login} variant="contained">
+                  <Button onClick={() => login(username, password)} variant="contained">
                     Log in
                   </Button>
                 </Stack>
