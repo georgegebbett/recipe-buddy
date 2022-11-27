@@ -4,10 +4,14 @@ import { useEnvironment } from '../contexts/Environment';
 import { useAuth } from '../contexts/Auth';
 import { refreshFold } from '@nll/datum/DatumEither';
 import { matchExhaustive } from '@practical-fp/union-types';
+import { useEffect } from 'react';
 
 export const useApiFetch = <E, A>(fetcher: (input: RequestInfo, init?: RequestInit) => TaskEither<E, A>) => {
   const { BACKEND_URL } = useEnvironment()
   const {state} = useAuth()
+
+  useEffect(() => {
+    console.log(state)}, [state])
 
   const getToken = () => pipe(
     state,

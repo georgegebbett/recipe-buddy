@@ -4,6 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { FCWithChildren } from '../types/react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../contexts/User';
+import { Logo } from '../elements/elements';
 
 const navigation = [
   { name: 'Recipes', href: '/recipes', current: window.location.pathname === "/recipes" },
@@ -33,10 +34,8 @@ export const AppLayout: FCWithChildren<{}> = ({children, ...rest}) => {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img
+                      <Logo
                         className="h-8 w-8"
-                        src="../src/favicon.png"
-                        alt="Recipe Buddy"
                       />
                     </div>
                     <div className="hidden md:block">
@@ -60,14 +59,6 @@ export const AppLayout: FCWithChildren<{}> = ({children, ...rest}) => {
                     </div>
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
-                      <button
-                        type="button"
-                        className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
 
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
@@ -105,7 +96,6 @@ export const AppLayout: FCWithChildren<{}> = ({children, ...rest}) => {
                           </Menu.Items>
                         </Transition>
                       </Menu>
-                    </div>
                   </div>
                   <div className="-mr-2 flex md:hidden">
                     {/* Mobile menu button */}
@@ -147,13 +137,6 @@ export const AppLayout: FCWithChildren<{}> = ({children, ...rest}) => {
                       <div className="text-base font-medium leading-none text-white">{"user.name"}</div>
                       <div className="text-sm font-medium leading-none text-gray-400">{"user.email"}</div>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
                   </div>
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (

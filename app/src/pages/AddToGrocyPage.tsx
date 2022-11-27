@@ -23,6 +23,12 @@ import { useAtom } from "jotai";
 import { rbTheme } from "../styles/styles";
 import MenuAppBar from "../components/MenuAppBar";
 import { tokenAtom } from "../App";
+import { useApiFetch } from '../hooks/useApiClient';
+import { fetchAndCast } from '../lib/fetch';
+import { useFromTaskEither } from '../hooks/useAsync';
+import { pipe } from 'fp-ts/lib/function';
+import { refreshFold } from '@nll/datum/DatumEither';
+import { IngredientTable } from '../components/new/IngredientTable';
 
 export function AddToGrocyPage() {
   const params = useParams();
@@ -64,22 +70,41 @@ export function AddToGrocyPage() {
     // masterMap.forEach((v, k) => console.log(k, v));
   };
 
-  async function retrieveRecipe() {
-    try {
-      const { data } = await axios.get(`/api/recipes/${params.id}`, {
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      });
-      setRecipe(data);
-      setRecipeLoaded(true);
-      data.ingredients.forEach((value: Ingredient, index: number) =>
-        updateMasterMap(index, {})
-      );
-    } catch (e) {
-      alert(e);
-    }
-  }
+  const api = useApiFetch(fetchAndCast<Recipe>())
+  const {status, execute} = useFromTaskEither(api)
+
+  useEffect(() => {execute(`recipes/${params.id}`)}, [])
+  useEffect(() => {
+    pipe(
+      status,
+      refreshFold(
+        () => null,
+        () => null,
+        () => null,
+        a => {
+          setRecipe(a)
+          setIsLoaded(true)
+        }
+      )
+    )
+  })
+
+  // async function retrieveRecipe() {
+  //   try {
+  //     const { data } = await axios.get(`/api/recipes/${params.id}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token.access_token}`,
+  //       },
+  //     });
+  //     setRecipe(data);
+  //     setRecipeLoaded(true);
+  //     data.ingredients.forEach((value: Ingredient, index: number) =>
+  //       updateMasterMap(index, {})
+  //     );
+  //   } catch (e) {
+  //     alert(e);
+  //   }
+  // }
 
   async function getProducts() {
     interface ProductData {
@@ -189,7 +214,7 @@ export function AddToGrocyPage() {
   }
 
   async function preparePage() {
-    retrieveRecipe();
+    // retrieveRecipe();
     getProducts();
     getQuantityUnits();
   }
@@ -245,41 +270,43 @@ export function AddToGrocyPage() {
                       })
                     }
                   />
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Recipe Ingredient</TableCell>
-                          <TableCell>Grocy Product</TableCell>
-                          <TableCell>Quantity</TableCell>
-                          <TableCell>Use any unit</TableCell>
-                          <TableCell>Quantity Unit</TableCell>
-                          <TableCell>Create Product</TableCell>
-                          <TableCell>Confirm</TableCell>
-                          <TableCell>Ignore</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {recipe?.ingredients
-                          ? recipe?.ingredients.map((ingredient, index) => {
-                              return (
-                                <IngredientRow
-                                  key={index}
-                                  ingredient={ingredient}
-                                  index={index}
-                                  grocyBase={grocyBase}
-                                  products={products}
-                                  quantityUnits={quantityUnits}
-                                  isLoaded={isLoaded}
-                                  updateMasterMap={updateMasterMap}
-                                  refreshProducts={getProducts}
-                                />
-                              );
-                            })
-                          : null}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+
+                  <IngredientTable ingredients={recipe?.ingredients}/>
+                  {/*<TableContainer>*/}
+                  {/*  <Table>*/}
+                  {/*    <TableHead>*/}
+                  {/*      <TableRow>*/}
+                  {/*        <TableCell>Recipe Ingredient</TableCell>*/}
+                  {/*        <TableCell>Grocy Product</TableCell>*/}
+                  {/*        <TableCell>Quantity</TableCell>*/}
+                  {/*        <TableCell>Use any unit</TableCell>*/}
+                  {/*        <TableCell>Quantity Unit</TableCell>*/}
+                  {/*        <TableCell>Create Product</TableCell>*/}
+                  {/*        <TableCell>Confirm</TableCell>*/}
+                  {/*        <TableCell>Ignore</TableCell>*/}
+                  {/*      </TableRow>*/}
+                  {/*    </TableHead>*/}
+                  {/*    <TableBody>*/}
+                  {/*      {recipe?.ingredients*/}
+                  {/*        ? recipe?.ingredients.map((ingredient, index) => {*/}
+                  {/*            return (*/}
+                  {/*              <IngredientRow*/}
+                  {/*                key={index}*/}
+                  {/*                ingredient={ingredient}*/}
+                  {/*                index={index}*/}
+                  {/*                grocyBase={grocyBase}*/}
+                  {/*                products={products}*/}
+                  {/*                quantityUnits={quantityUnits}*/}
+                  {/*                isLoaded={isLoaded}*/}
+                  {/*                updateMasterMap={updateMasterMap}*/}
+                  {/*                refreshProducts={getProducts}*/}
+                  {/*              />*/}
+                  {/*            );*/}
+                  {/*          })*/}
+                  {/*        : null}*/}
+                  {/*    </TableBody>*/}
+                  {/*  </Table>*/}
+                  {/*</TableContainer>*/}
                   <Stack direction="row">
                     <Button onClick={() => navigate("/recipes")}>Back</Button>
                     <Button

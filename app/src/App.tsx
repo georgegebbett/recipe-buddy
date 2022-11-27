@@ -3,10 +3,9 @@ import { atomWithStorage } from 'jotai/utils';
 import { Token } from './types/types';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { RecipeDisplayPage } from './pages/RecipeDisplayPage';
-import { AddToGrocyPage } from './pages/AddToGrocyPage';
+import { AddToGrocyPage } from './pages/new/AddToGrocyPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { SetupPage } from './pages/SetupPage';
-import { LoginPage } from './pages/LoginPage';
 import { DevPage } from './pages/DevPage';
 import { AuthProvider, LoggedInUser, useAuth } from './contexts/Auth';
 import { DEFAULT_ENVIRONMENT, EnvironmentContext } from './contexts/Environment';
@@ -15,6 +14,8 @@ import { pipe } from 'fp-ts/lib/function';
 import { matchExhaustive } from '@practical-fp/union-types';
 import { AppLayout } from './layouts/AppLayout';
 import { UserProvider } from './contexts/User';
+import { LoginPage } from './pages/new/LoginPage';
+import { RecipePage } from './pages/new/RecipePage';
 
 export const tokenAtom = atomWithStorage<Token>("recipe-token", {});
 
@@ -34,7 +35,7 @@ const LoggedInApp: FC<{user: LoggedInUser}> = ({user}) => (
   <UserProvider user={user}>
   <AppLayout>
     <Routes>
-      <Route path="/recipes" element={<RecipeDisplayPage />} />
+      <Route path="/recipes" element={<RecipePage/>} />
       <Route path="/recipes/:id" element={<AddToGrocyPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/setup" element={<SetupPage />} />
@@ -45,11 +46,9 @@ const LoggedInApp: FC<{user: LoggedInUser}> = ({user}) => (
 )
 
 const LoggedOutApp: FC = (props) => (
-  <AppLayout>
     <Routes>
       <Route path="/*" element={<LoginPage/>}/>
     </Routes>
-  </AppLayout>
 )
 
 const AuthLoader:FC = () => {
