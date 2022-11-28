@@ -1,4 +1,4 @@
-interface Ingredient {
+interface GrocyIngredient {
   grocyProductId: string;
   quantity: string;
   useAnyUnit: boolean;
@@ -9,6 +9,6 @@ export class AddRecipeToGrocyDto {
   _id: string;
   name: string;
   steps: string[];
-  ingredients: Ingredient[];
+  ingredients: GrocyIngredient[];
   imageUrl: string;
 }
