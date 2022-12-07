@@ -1,11 +1,21 @@
-FROM node:16-alpine
+FROM node:16-alpine AS builder
+
+WORKDIR /root/
 
 COPY . .
 
-RUN npm install
+RUN yarn install --frozen-lockfile
 
-RUN npm run build
+RUN yarn build
+
+
+FROM node:16-alpine
+
+WORKDIR /root/
+
+COPY --from=builder /root/node_modules /root/node_modules
+COPY --from=builder /root/dist /root/dist
 
 EXPOSE 4000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]
