@@ -5,7 +5,7 @@ import { Recipe } from '../schemas/recipe.schema';
 @Injectable()
 export class RecipeScraper {
   parseRecipeSteps(steps) {
-    return steps.map((step) => {
+    return steps.flat().map((step) => {
       if (typeof step === 'string') return step.trim();
       if (step.hasOwnProperty('text')) return step.text.trim();
       throw new Error('Unable to parse recipe steps');
@@ -20,7 +20,7 @@ export class RecipeScraper {
   }
 
   parseRecipeIngredients = (ingredients) => {
-    return ingredients.map((ingredient) => ingredient.trim());
+    return ingredients.flat().map((ingredient) => ingredient.trim());
   };
 
   parseRecipeName = (name) => {
