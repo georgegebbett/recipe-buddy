@@ -47,7 +47,7 @@ jobs:
           tags: type=semver,pattern={{version}}
 
       - name: Build and push frontend Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./app
           push: true
@@ -55,7 +55,7 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           
       - name: Build and push backend Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./api
           push: true
