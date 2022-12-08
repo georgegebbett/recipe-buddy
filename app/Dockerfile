@@ -2,9 +2,9 @@ FROM node:16-alpine as builder
 
 COPY . .
 
-RUN npm install
+RUN yarn install --frozen-lockfile
 
-RUN npm run build
+RUN yarn build
 
 FROM nginx as Deploy
 
