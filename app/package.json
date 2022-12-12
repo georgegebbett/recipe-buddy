@@ -14,12 +14,12 @@
     "@emotion/styled": "^11.10.0",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.16",
-    "@mui/material": "^5.10.16",
+    "@mui/material": "^5.10.17",
     "axios": "^1.2.0",
     "jotai": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.4"
+    "react-router-dom": "^6.4.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
