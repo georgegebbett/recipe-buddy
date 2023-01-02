@@ -878,10 +878,10 @@
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
 
-"@vitest/ui@^0.26.0":
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.26.0.tgz#e0c361902722b70d7b1ef1e821d87834b5e42389"
-  integrity sha512-aEThdF469KCaU8m0eQ3C8TRa1UOlDjHEdIzmqKdKrwYtZrDsx/CHTzb6wXjmr7L+ldHyCctkss7uNTlMXRQjtg==
+"@vitest/ui@^0.26.3":
+  version "0.26.3"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.26.3.tgz#f375e97d7afbbdf90e864334eb4898cc7b7bc41b"
+  integrity sha512-GekIZekLQVL765LmQObHai7Q3U+BWD0nxJVK1yV8VPcs6H/6EAnNuEZ8tFq87jCxyHEZ3zmOrX6uPmG65gBVrA==
   dependencies:
     fast-glob "^3.2.12"
     flatted "^3.2.7"
