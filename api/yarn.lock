@@ -2174,10 +2174,10 @@ axios@0.26.1:
   dependencies:
     follow-redirects "^1.14.8"
 
-axios@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.2.1.tgz#44cf04a3c9f0c2252ebd85975361c026cb9f864a"
-  integrity sha512-I88cFiGu9ryt/tfVEi4kX2SITsvDddTajXTOFmt2uK1ZVA8LytjtdeyefdQWEf5PU8w+4SSJDoYnggflB5tW4A==
+axios@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.2.2.tgz#72681724c6e6a43a9fea860fc558127dbe32f9f1"
+  integrity sha512-bz/J4gS2S3I7mpN/YZfGFTqhXTYzRho8Ay38w2otuuDR322KzFIWm/4W2K6gIwvWaws5n+mnb7D1lN9uD+QH6Q==
   dependencies:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
@@ -4362,10 +4362,10 @@ jwt-decode@^3.1.2:
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
-kareem@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.5.0.tgz#9d2b2272609b0d5b981757fa5794d7ad0ac041b2"
-  integrity sha512-rVBUGGwvqg130iwYu8k7lutHuDBFj1yGRdnlE44wEhxAmFBad1zcL66PdWC1raw3tIObY6XWhtv3VL04xQb/cg==
+kareem@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/kareem/-/kareem-2.5.1.tgz#7b8203e11819a8e77a34b3517d3ead206764d15d"
+  integrity sha512-7jFxRVm+jD+rkq3kY0iZDJfsO2/t4BBPeEb2qKn2lR/9KhuksYk5hxzfRYWMPV8P/x2d0kHD306YyWLzjjH+uA==
 
 kleur@^3.0.3:
   version "3.0.3"
@@ -4589,13 +4589,13 @@ mongodb@4.12.1:
     "@aws-sdk/credential-providers" "^3.186.0"
     saslprep "^1.0.3"
 
-mongoose@^6.8.1:
-  version "6.8.1"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.8.1.tgz#7a5bf02241b88317ceca459beac9db5ff1ce8225"
-  integrity sha512-utr2hclZ+/QlO+JuVd33dxzvLKtByEhaLj8mEO+tqCm6pgOboKv+DWcvJDEcCMl4Rgd1ubgfYz4cZ9BWyHmC3Q==
+mongoose@^6.8.3:
+  version "6.8.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.8.3.tgz#6580b9846a9defbb0f0cff317443d4f87e9cce8e"
+  integrity sha512-qrVWefJK+wFNBH0ALV+oiyJ+FN42O/BqvHFmlFJJ2LKuNmQEOE0JV8FCxnZqtanwbHs4i+k/SkjhtC+C01haaw==
   dependencies:
     bson "^4.7.0"
-    kareem "2.5.0"
+    kareem "2.5.1"
     mongodb "4.12.1"
     mpath "0.9.0"
     mquery "4.0.3"
