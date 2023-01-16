@@ -16,7 +16,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.4",
     "axios": "^1.2.2",
-    "jotai": "^1.12.1",
+    "jotai": "^1.13.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.6.1"
