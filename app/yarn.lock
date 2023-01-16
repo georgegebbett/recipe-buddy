@@ -863,10 +863,10 @@
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
 
-"@vitest/ui@^0.26.3":
-  version "0.26.3"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.26.3.tgz#f375e97d7afbbdf90e864334eb4898cc7b7bc41b"
-  integrity sha512-GekIZekLQVL765LmQObHai7Q3U+BWD0nxJVK1yV8VPcs6H/6EAnNuEZ8tFq87jCxyHEZ3zmOrX6uPmG65gBVrA==
+"@vitest/ui@^0.27.1":
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.27.1.tgz#fd4ed29ff9374c98fe0e2481ba0a6a0d49da4263"
+  integrity sha512-o9LmWY/XyWt5Pqb+bLLK+N3Vk+PP2jqrdDDMEAY43dB6vtZ+gYuOt5IutUfB7gXeJ6xeIlzUZ/OabrR3leldCA==
   dependencies:
     fast-glob "^3.2.12"
     flatted "^3.2.7"
@@ -1630,10 +1630,10 @@ jest-matcher-utils@^27.0.0:
     jest-get-type "^27.5.1"
     pretty-format "^27.5.1"
 
-jotai@^1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.12.1.tgz#18808724c96f8c038f6ee8b75f3ac37e1ac35608"
-  integrity sha512-t6gsYM1WkQHMOazaZYLykCA+fh9KPDGrA+tDYzDeV0268QsCqmX6S4lO46uswgt1LGUeG0EDFGuMd9ac8cWNTA==
+jotai@^1.13.1:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.13.1.tgz#20cc46454cbb39096b12fddfa635b873b3668236"
+  integrity sha512-RUmH1S4vLsG3V6fbGlKzGJnLrDcC/HNb5gH2AeA9DzuJknoVxSGvvg8OBB7lke+gDc4oXmdVsaKn/xDUhWZ0vw==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
