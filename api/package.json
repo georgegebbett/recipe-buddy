@@ -37,7 +37,7 @@
     "passport-local": "^1.0.0",
     "rand-token": "^1.0.1",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^4.0.7",
+    "rimraf": "^4.1.1",
     "rxjs": "^7.8.0",
     "schema-dts": "^1.1.0"
   },
@@ -51,7 +51,7 @@
     "@types/passport-jwt": "^3.0.8",
     "@types/passport-local": "^1.0.35",
     "@types/supertest": "^2.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.48.2",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
