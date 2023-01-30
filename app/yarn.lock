@@ -888,13 +888,15 @@
   dependencies:
     tinyspy "^1.0.2"
 
-"@vitest/ui@^0.27.1":
-  version "0.27.1"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.27.1.tgz#fd4ed29ff9374c98fe0e2481ba0a6a0d49da4263"
-  integrity sha512-o9LmWY/XyWt5Pqb+bLLK+N3Vk+PP2jqrdDDMEAY43dB6vtZ+gYuOt5IutUfB7gXeJ6xeIlzUZ/OabrR3leldCA==
+"@vitest/ui@^0.28.3":
+  version "0.28.3"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.28.3.tgz#3098f3cd3aed83fa36d0547e244b4702ddb385a1"
+  integrity sha512-pbr9VySq2PJhaQP06Fq9c6Ra1wSUY1gnNEVhuwVU1yhqz78WdsO3rqREu7GSqEpAr6oZfwpBOUVzW87C2lNGYw==
   dependencies:
     fast-glob "^3.2.12"
     flatted "^3.2.7"
+    pathe "^1.1.0"
+    picocolors "^1.0.0"
     sirv "^2.0.2"
 
 "@vitest/utils@0.28.1":
