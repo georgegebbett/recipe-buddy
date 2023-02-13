@@ -888,10 +888,10 @@
   dependencies:
     tinyspy "^1.0.2"
 
-"@vitest/ui@^0.28.4":
-  version "0.28.4"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.28.4.tgz#d309d2d0ee09d37daac55ba5915fe36d7e8b4375"
-  integrity sha512-LQfCCFc17n49mwtraV9/NAWl2DUqJS/9ZEa3fqJjoYO+HowdseQ5jvWflpzliCyfrIAh6cXVo1bNzHnDXe0cbw==
+"@vitest/ui@^0.28.5":
+  version "0.28.5"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-0.28.5.tgz#baddbfef0f31355f2f41bc8cf604166e544e8674"
+  integrity sha512-hzzZzv38mH/LMFh54QEJpWFuGixZZBOD+C0fHU81d1lsvochPwNZhWJbuRJQNyZLSMZYCYW4hF6PpNQJXDHDmg==
   dependencies:
     fast-glob "^3.2.12"
     flatted "^3.2.7"
