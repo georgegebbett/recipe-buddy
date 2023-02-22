@@ -11,9 +11,17 @@ import { RecipesModule } from './recipes/recipes.module';
 import { GrocyModule } from './grocy/grocy.module';
 import { ImportModule } from './import/import.module';
 
+const mongoUser = process.env.MONGO_USER;
+const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoHost = process.env.MONGO_HOST;
+const mongoPort = process.env.MONGO_PORT;
+const mongoConnectionString = `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}/`;
+
+console.log(`Using database at "${mongoHost}:${mongoPort}" with user "${mongoUser}"`);
+
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://root:root@mongo:27017/'),
+    MongooseModule.forRoot(mongoConnectionString),
     AuthModule,
     UsersModule,
     RecipesModule,

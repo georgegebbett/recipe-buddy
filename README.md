@@ -24,8 +24,18 @@ Well, dear reader, as I am a benevolent goblin-wrangler, I have imprisoned them 
 4. ???
 5. Profit
 
+## Environment variables
+
+| Environment Variable | Default   | Function |
+|----------------------|-----------|----------|
+| `FRONTEND_PORT`      | `"4000"`  | Port where the frontend application will be served. |
+| `MONGO_HOST`         | `"mongo"` | Hostname or IP of the mongo database. |
+| `MONGO_PORT`         | `"27017"` | Mongo database port. |
+| `MONGO_USER`         | `"root"`  | Username to create and use to connect to MongoDB. If a database already exists, the user will not be created. |
+| `MONGO_PASSWORD`     | `"root"`  | Password to create and use with the provided username. If a database already exists, this will not change the password of the user. |
+
 ## A disclaimer
 
-I am not (yet) a professional software engineer. I certainly do not profess to be any good at this stuff. I hereby abdicate any responsibility for the misbehaviour of the TypeScript goblins. If you think you can do better, then open a PR and I will almost certainly merge it without question. 
+I am not (yet) a professional software engineer. I certainly do not profess to be any good at this stuff. I hereby abdicate any responsibility for the misbehaviour of the TypeScript goblins. If you think you can do better, then open a PR and I will almost certainly merge it without question.
 
 Lots of love, George xoxoxoxo
