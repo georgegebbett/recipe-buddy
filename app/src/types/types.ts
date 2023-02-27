@@ -1,3 +1,5 @@
+import { NonEmptyArray } from "fp-ts/NonEmptyArray";
+
 export interface Token {
   access_token?: string;
   refresh_token?: string;
@@ -10,7 +12,7 @@ export interface Recipe {
   url: string;
   name: string;
   imageUrl: string;
-  ingredients: string[];
+  ingredients: NonEmptyArray<string>;
   steps: string[];
 }
 
