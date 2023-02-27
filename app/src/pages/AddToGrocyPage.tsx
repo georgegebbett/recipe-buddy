@@ -5,12 +5,6 @@ import {
   Container,
   Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   ThemeProvider,
   Toolbar,
@@ -18,17 +12,15 @@ import {
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { Ingredient, Product, QuantityUnit, Recipe } from "../types/types";
-import { IngredientRow } from "../components/IngredientRow";
 import { useAtom } from "jotai";
 import { rbTheme } from "../styles/styles";
-import MenuAppBar from "../components/MenuAppBar";
 import { tokenAtom } from "../App";
-import { useApiFetch } from '../hooks/useApiClient';
-import { fetchAndCast } from '../lib/fetch';
-import { useFromTaskEither } from '../hooks/useAsync';
-import { pipe } from 'fp-ts/lib/function';
-import { refreshFold } from '@nll/datum/DatumEither';
-import { IngredientTable } from '../components/new/IngredientTable';
+import { useApiFetch } from "../hooks/useApiClient";
+import { fetchAndCast } from "../lib/fetch";
+import { useFromTaskEither } from "../hooks/useAsync";
+import { pipe } from "fp-ts/lib/function";
+import { refreshFold } from "@nll/datum/DatumEither";
+import { IngredientTable } from "../components/new/IngredientTable";
 
 export function AddToGrocyPage() {
   const params = useParams();
@@ -70,10 +62,12 @@ export function AddToGrocyPage() {
     // masterMap.forEach((v, k) => console.log(k, v));
   };
 
-  const api = useApiFetch(fetchAndCast<Recipe>())
-  const {status, execute} = useFromTaskEither(api)
+  const api = useApiFetch(fetchAndCast<Recipe>());
+  const { status, execute } = useFromTaskEither(api);
 
-  useEffect(() => {execute(`recipes/${params.id}`)}, [])
+  useEffect(() => {
+    execute(`recipes/${params.id}`);
+  }, []);
   useEffect(() => {
     pipe(
       status,
@@ -81,13 +75,13 @@ export function AddToGrocyPage() {
         () => null,
         () => null,
         () => null,
-        a => {
-          setRecipe(a)
-          setIsLoaded(true)
+        (a) => {
+          setRecipe(a);
+          setIsLoaded(true);
         }
       )
-    )
-  })
+    );
+  });
 
   // async function retrieveRecipe() {
   //   try {
@@ -256,6 +250,21 @@ export function AddToGrocyPage() {
           <Toolbar />
           <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+              {pipe(
+                status,
+                refreshFold(
+                  () => null,
+                  () => null,
+                  () => null,
+                  (r) => (
+                    <IngredientTable
+                      ingredients={r.ingredients}
+                      products={products}
+                    />
+                  )
+                )
+              )}
+
               {isLoaded ? (
                 <Fragment>
                   <h1>Add recipe to Grocy</h1>
@@ -271,7 +280,6 @@ export function AddToGrocyPage() {
                     }
                   />
 
-                  <IngredientTable ingredients={recipe?.ingredients}/>
                   {/*<TableContainer>*/}
                   {/*  <Table>*/}
                   {/*    <TableHead>*/}
