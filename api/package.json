@@ -39,7 +39,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^4.1.2",
     "rxjs": "^7.8.0",
-    "schema-dts": "^1.1.0"
+    "schema-dts": "^1.1.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.2.0",
