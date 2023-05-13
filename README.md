@@ -2,6 +2,12 @@
 
 [![Backend CI](https://github.com/georgegebbett/recipe-buddy/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/georgegebbett/recipe-buddy/actions/workflows/backend-ci.yml) [![wakatime](https://wakatime.com/badge/user/43ab5910-d51d-486b-9e03-376e766a43d3/project/c2af7adc-0f49-4c92-bcaa-63bb2f09e9e2.svg)](https://wakatime.com/badge/user/43ab5910-d51d-486b-9e03-376e766a43d3/project/c2af7adc-0f49-4c92-bcaa-63bb2f09e9e2)
 
+## Update - May 2023
+
+I am painfully aware of all the issues that beset Recipe Buddy relating to Mongo not working on certain architectures, recipes not scraping properly etc, and I am almost finished with a complete rewrite using a much more modern and (hopefully) reliable stack. You can check progress out on the `t3-rewrite` branch. 
+
+I am also actively seeking someone who likes writing frontend code more than me to collaborate on this - please do reach out in the [Discussions](https://github.com/georgegebbett/recipe-buddy/discussions) tab if you'd like to help!
+
 ## The problem
 
 I am getting sick of manually importing recipes into Grocy.
