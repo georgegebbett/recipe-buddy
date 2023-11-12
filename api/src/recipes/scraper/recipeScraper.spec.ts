@@ -1,5 +1,5 @@
-import { RecipeScraper } from './recipeScraper';
 import { Test, TestingModule } from '@nestjs/testing';
+import { RecipeScraper } from './recipeScraper';
 import {
   allRecipesDomString,
   allRecipesMetadataObject,
@@ -9,6 +9,7 @@ import {
   belliniUrl,
   mockNodeList,
   mockRecipe,
+  stringInstructionsRecipe,
   yoastDomString,
   yoastMetadataObject,
   yoastRecipe,
@@ -63,14 +64,6 @@ describe('RecipeScraper', () => {
     );
   });
 
-  it('should correctly parse recipe steps', function () {
-    expect(
-      scraper.parseRecipeSteps(belliniMetadataObject.recipeInstructions),
-    ).toEqual([
-      'Put the peach puree in a Champagne flute up to about 1/3 full and slowly top up with Prosecco.',
-    ]);
-  });
-
   it('should correctly extract the recipe image url', function () {
     expect(scraper.parseImageUrl(belliniMetadataObject.image)).toEqual(
       belliniMetadataObject.image.url,
@@ -118,5 +111,32 @@ describe('RecipeScraper', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+});
+
+describe('RecipeScraper#parseRecipeSteps', () => {
+  let scraper: RecipeScraper;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [RecipeScraper],
+    }).compile();
+    scraper = module.get<RecipeScraper>(RecipeScraper);
+  });
+
+  it('should correctly parse recipe steps from an array', function () {
+    expect(
+      scraper.parseRecipeSteps(belliniMetadataObject.recipeInstructions),
+    ).toEqual([
+      'Put the peach puree in a Champagne flute up to about 1/3 full and slowly top up with Prosecco.',
+    ]);
+  });
+
+  it('should correctly parse recipe steps from a string', function () {
+    expect(
+      scraper.parseRecipeSteps(stringInstructionsRecipe.recipeInstructions),
+    ).toEqual([
+      'Put the peach puree in a Champagne flute up to about 1/3 full and slowly top up with Prosecco.',
+    ]);
   });
 });
