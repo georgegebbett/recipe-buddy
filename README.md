@@ -1,5 +1,5 @@
 # Recipe Buddy
-
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
 [![Backend CI](https://github.com/georgegebbett/recipe-buddy/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/georgegebbett/recipe-buddy/actions/workflows/backend-ci.yml) [![wakatime](https://wakatime.com/badge/user/43ab5910-d51d-486b-9e03-376e766a43d3/project/c2af7adc-0f49-4c92-bcaa-63bb2f09e9e2.svg)](https://wakatime.com/badge/user/43ab5910-d51d-486b-9e03-376e766a43d3/project/c2af7adc-0f49-4c92-bcaa-63bb2f09e9e2)
 
 ## Update - May 2023
