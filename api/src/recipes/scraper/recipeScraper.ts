@@ -4,10 +4,13 @@ import { Recipe } from '../schemas/recipe.schema';
 
 @Injectable()
 export class RecipeScraper {
-  parseRecipeSteps(steps) {
+  parseRecipeSteps(steps: string | Array<object | string>): string[] {
+    if (typeof steps === 'string') return [steps.trim()];
+
     return steps.flat().map((step) => {
       if (typeof step === 'string') return step.trim();
-      if (step.hasOwnProperty('text')) return step.text.trim();
+      if ('text' in step && typeof step.text === 'string')
+        return step.text.trim();
       throw new Error('Unable to parse recipe steps');
     });
   }

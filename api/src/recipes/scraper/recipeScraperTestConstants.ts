@@ -67,6 +67,58 @@ export const belliniMetadataObject = {
   totalTime: 'PT5M',
 };
 
+export const stringInstructionsRecipe = {
+  '@context': 'https://schema.org',
+  '@id': 'https://www.bbcgoodfood.com/recipes/bellini#Recipe',
+  '@type': 'Recipe',
+  description:
+    'A classy cocktail served in an elegant flute - this simple combination of peach purée and Prosecco makes a great start to any celebration',
+  image: {
+    '@type': 'ImageObject',
+    height: 400,
+    url: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/bellini-b049342.jpg',
+    width: 440,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://www.bbcgoodfood.com/recipes/bellini',
+  },
+  name: 'Bellini',
+  url: 'https://www.bbcgoodfood.com/recipes/bellini',
+  author: { '@type': 'Person', name: 'Good Food team' },
+  dateModified: '2020-08-08T02:26:26+00:00',
+  datePublished: '2013-11-18T16:37:44+00:00',
+  headline: 'Bellini',
+  keywords:
+    'Christmas, Christmas morning, cocktails canapes, Good Food, Party, sparkling cocktail',
+  publisher: {
+    '@type': 'Organization',
+    name: 'BBC Good Food',
+    url: 'https://www.bbcgoodfood.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://images.immediate.co.uk/production/volatile/sites/30/2019/07/GoodFood-dark-516d417.png',
+      width: 221,
+      height: 58,
+    },
+  },
+  nutrition: {
+    '@type': 'NutritionInformation',
+    calories: '143 calories',
+    carbohydrateContent: '18 grams carbohydrates',
+    sugarContent: '18 grams sugar',
+    fiberContent: '0.7 grams fiber',
+    proteinContent: '0.7 grams protein',
+  },
+  prepTime: 'PT5M',
+  recipeCategory: 'Cocktails',
+  recipeIngredient: ['500ml peach purée or peach nectar', '1 bottle prosecco'],
+  recipeInstructions:
+    'Put the peach puree in a Champagne flute up to about 1/3 full and slowly top up with Prosecco.',
+  recipeYield: 6,
+  totalTime: 'PT5M',
+};
+
 export const mockRecipe = (
   url = 'https://www.bbcgoodfood.com/recipes/bellini',
   name = 'Bellini',
