@@ -1,14 +1,10 @@
-import { scrapeRecipeProcedure } from "~/server/api/modules/recipes/procedures/scrapeRecipe"
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc"
-import { z } from "zod"
-import {listRecipesProcedure} from "~/server/api/modules/recipes/procedures/listRecipes";
-import {getRecipeByIdProcedure} from "~/server/api/modules/recipes/procedures/getById";
-import {checkGrocyConnectionProcedure} from "~/server/api/modules/grocy/procedures/checkGrocyConnection";
+import { checkGrocyConnectionProcedure } from "~/server/api/modules/grocy/procedures/checkGrocyConnection"
+import { getGrocyProductsProcedure } from "~/server/api/modules/grocy/procedures/getGrocyProducts"
+import { getGrocyQuantityUnitsProcedure } from "~/server/api/modules/grocy/procedures/getGrocyQuantityUnits"
+import { createTRPCRouter } from "~/server/api/trpc"
 
 export const grocyRouter = createTRPCRouter({
-  checkConnection: checkGrocyConnectionProcedure
+  checkConnection: checkGrocyConnectionProcedure,
+  getProducts: getGrocyProductsProcedure,
+  getQuantityUnits: getGrocyQuantityUnitsProcedure,
 })

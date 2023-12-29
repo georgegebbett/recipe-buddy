@@ -1,3 +1,5 @@
+import { getRecipeByIdProcedure } from "~/server/api/modules/recipes/procedures/getById"
+import { listRecipesProcedure } from "~/server/api/modules/recipes/procedures/listRecipes"
 import { scrapeRecipeProcedure } from "~/server/api/modules/recipes/procedures/scrapeRecipe"
 import {
   createTRPCRouter,
@@ -5,8 +7,6 @@ import {
   publicProcedure,
 } from "~/server/api/trpc"
 import { z } from "zod"
-import {listRecipesProcedure} from "~/server/api/modules/recipes/procedures/listRecipes";
-import {getRecipeByIdProcedure} from "~/server/api/modules/recipes/procedures/getById";
 
 export const recipeRouter = createTRPCRouter({
   hello: publicProcedure
@@ -22,5 +22,5 @@ export const recipeRouter = createTRPCRouter({
   }),
   scrape: scrapeRecipeProcedure,
   list: listRecipesProcedure,
-  get: getRecipeByIdProcedure
+  get: getRecipeByIdProcedure,
 })

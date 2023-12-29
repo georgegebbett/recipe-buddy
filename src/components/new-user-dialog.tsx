@@ -11,6 +11,7 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "~/components/ui/input";
 import {api} from "~/trpc/react";
 import {useState} from "react";
+import {toast} from "sonner";
 
 export const NewUserDialog = () => {
 
@@ -20,8 +21,28 @@ export const NewUserDialog = () => {
     resolver: zodResolver(CreateUserSchema)
   })
 
+  const utils = api.useContext()
+
   const {mutate, isLoading} = api.users.create.useMutation({
-    onSuccess: () => setOpen(false)
+    onMutate: (variables) => {
+      const prevData = utils.users.list.getData()
+      utils.users.list.setData(undefined, old => old ? [...old, {
+        name: variables.name,
+        username: variables.username,
+        id: 5000
+      }] : [{name: variables.name, username: variables.username, id: 5000}])
+
+      return {prevData}
+
+    },
+    onError(_err, _newPost, ctx) {
+      toast.error("Unable to create user")
+      utils.users.list.setData(undefined, ctx?.prevData || []);
+    },
+    onSettled() {
+      setOpen(false)
+      utils.users.list.invalidate();
+    },
   })
 
 

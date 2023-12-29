@@ -1,7 +1,7 @@
-import {recipeRouter} from "~/server/api/routers/recipe"
-import {createTRPCRouter} from "~/server/api/trpc"
-import {grocyRouter} from "~/server/api/routers/grocy";
-import {userRouter} from "~/server/api/routers/user";
+import { grocyRouter } from "~/server/api/routers/grocy"
+import { recipeRouter } from "~/server/api/routers/recipe"
+import { userRouter } from "~/server/api/routers/user"
+import { createTRPCRouter } from "~/server/api/trpc"
 
 /**
  * This is the primary router for your server.
@@ -11,7 +11,7 @@ import {userRouter} from "~/server/api/routers/user";
 export const appRouter = createTRPCRouter({
   recipe: recipeRouter,
   grocy: grocyRouter,
-  users: userRouter
+  users: userRouter,
 })
 
 // export type definition of API
