@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsUpDown } from "lucide-react"
+import {ChevronsUpDown} from "lucide-react"
 
-import { Button } from "~/components/ui/button"
+import {Button} from "~/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -18,9 +18,12 @@ import {
 } from "~/components/ui/popover"
 import {api} from "~/trpc/react";
 
-export function GrocyUnitCombobox() {
+export function GrocyUnitCombobox({disabled, value, setValue}: {
+  disabled?: boolean;
+  value: string;
+  setValue: (newValue: string) => void
+}) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
 
   const {data} = api.grocy.getQuantityUnits.useQuery()
 
@@ -32,16 +35,17 @@ export function GrocyUnitCombobox() {
               role="combobox"
               aria-expanded={open}
               className="w-[200px] justify-between"
+              disabled={disabled}
           >
             {value
                 ? data.find((product) => product.id === value)?.name
                 : "Select unit..."}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
           <Command>
-            <CommandInput placeholder="Search units..." />
+            <CommandInput placeholder="Search units..."/>
             <CommandEmpty>No product found.</CommandEmpty>
             <CommandGroup className="max-h-52 overflow-y-scroll">
               {data.map((product) => (
