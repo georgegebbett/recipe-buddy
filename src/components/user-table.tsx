@@ -1,20 +1,27 @@
-'use client'
+"use client"
 
-import {api} from "~/trpc/react";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
-import {Button} from "~/components/ui/button";
-import {NewUserDialog} from "~/components/new-user-dialog";
+import { api } from "~/trpc/react"
 
-export function UserTable () {
+import { Button } from "~/components/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table"
+import { NewUserDialog } from "~/components/new-user-dialog"
 
-  const {data} = api.users.list.useQuery()
+export function UserTable() {
+  const { data } = api.users.list.useQuery()
 
   return (
-      <div className="flex flex-col">
-        <div className="flex items-center justify-between">
-          <p className="text-xl">Users</p>
-          <NewUserDialog/>
-        </div>
+    <div className="flex flex-col">
+      <div className="flex items-center justify-between">
+        <p className="text-xl">Users</p>
+        <NewUserDialog />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -25,7 +32,8 @@ export function UserTable () {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data && data.map((a) => (
+          {data &&
+            data.map((a) => (
               <TableRow key={a.id}>
                 <TableCell>{a.id}</TableCell>
                 <TableCell>{a.name}</TableCell>
@@ -35,11 +43,9 @@ export function UserTable () {
                   <Button>Delete</Button>
                 </TableCell>
               </TableRow>
-          ))}
+            ))}
         </TableBody>
       </Table>
-      </div>
+    </div>
   )
-
-
 }

@@ -1,6 +1,6 @@
 import { DashboardHeader } from "~/components/header"
+import { NewRecipeDialog } from "~/components/new-recipe-dialog"
 import { DashboardShell } from "~/components/shell"
-import {NewRecipeDialog} from "~/components/new-recipe-dialog";
 
 export default function DashboardLoading() {
   return (

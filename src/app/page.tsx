@@ -1,7 +1,5 @@
 import { getServerAuthSession } from "~/server/auth"
 
-import { SidebarLayout } from "~/components/SidebarLayout"
-
 export default async function Home() {
   const session = await getServerAuthSession()
 
