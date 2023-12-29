@@ -22,10 +22,10 @@ export const GrocyStatus = () => {
         ) : isLoading ? (
             <Alert className="pl-10">
               <AlertTitle>
-                <Skeleton className="w-40 h-5"/>
+                <Skeleton className="h-5 w-40"/>
               </AlertTitle>
               <AlertDescription>
-                <Skeleton className="w-80 h-4"/>
+                <Skeleton className="h-4 w-80"/>
               </AlertDescription>
             </Alert>
         ) : (

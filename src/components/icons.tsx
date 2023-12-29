@@ -23,13 +23,13 @@ import {
   Twitter,
   User,
   X,
-  type LucideIcon,
+  type LucideIcon, CookingPot,
 } from "lucide-react"
 
 export type Icon = LucideIcon
 
 export const Icons = {
-  logo: Command,
+  logo: CookingPot,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

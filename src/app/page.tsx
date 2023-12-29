@@ -1,13 +1,9 @@
-import { getServerAuthSession } from "~/server/auth"
+import {getServerAuthSession} from "~/server/auth"
+import {redirect} from "next/navigation";
+import {ROUTES} from "~/lib/routes";
 
 export default async function Home() {
   const session = await getServerAuthSession()
 
-  const numbers = new Array(50).fill(0).map((a, i) => i)
-
-  return (
-    <div className="flex h-full flex-1 flex-col">
-      <p>Hello {session.user.name}</p>
-    </div>
-  )
+  if (session) redirect(ROUTES.recipes.root)
 }

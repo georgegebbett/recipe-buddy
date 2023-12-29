@@ -45,19 +45,22 @@ export default async function RootLayout(
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex min-h-screen flex-col space-y-6">
             <header className="bg-background sticky top-0 z-40 border-b">
-              <div className="container flex h-16 items-center justify-between py-4">
-                {user ? (
-                    <><MainNav items={dashboardConfig.mainNav}/><UserAccountNav
-                        user={{
-                          name: user?.name,
-                          username: user?.username,
-                        }}/></>) : (<>
-                 <SignInButton/>
 
-                </>)}
+              <div className="container flex h-16 items-center justify-between py-4">
+                <MainNav items={user ? dashboardConfig.mainNav : []}/>
+                {user && <UserAccountNav
+                    user={{
+                      name: user?.name,
+                      username: user?.username,
+                    }}/>}
               </div>
+
             </header>
-            {children}
+            {user ? children :
+                <div className="flex items-center justify-center">
+                  <SignInButton/>
+                </div>
+            }
             <Toaster/>
             {/*<SiteFooter className="border-t" />*/}
           </div>
