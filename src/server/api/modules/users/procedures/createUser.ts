@@ -1,9 +1,7 @@
-import { CreateUserSchema } from "~/server/api/modules/users/procedures/createUserSchema"
-import { protectedProcedure } from "~/server/api/trpc"
-import { db } from "~/server/db"
-import { users as userTable } from "~/server/db/schema"
-import bcrypt from "bcrypt"
-import z from "zod"
+import { CreateUserSchema } from '~/server/api/modules/users/procedures/createUserSchema';
+import { protectedProcedure } from '~/server/api/trpc';
+import z from 'zod';
+import { createUser } from '~/server/api/modules/users/service/createUser';
 
 export const createUserProcedure = protectedProcedure
   .input(CreateUserSchema)
@@ -15,15 +13,5 @@ export const createUserProcedure = protectedProcedure
     })
   )
   .mutation(async ({ input }) => {
-    const hashed = await bcrypt.hash(input.password, 10)
-
-    const insertedUser = await db.insert(userTable).values({
-      ...input,
-      passwordHash: hashed,
-    })
-
-    return {
-      id: insertedUser.lastInsertRowid as number,
-      ...input,
-    }
+   return createUser(input)
   })

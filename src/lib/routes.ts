@@ -3,4 +3,5 @@ export const ROUTES = {
     root: "/recipes",
     details: (id: number | string) => `/recipes/${id}`,
   },
+  setup: "/setup"
 }

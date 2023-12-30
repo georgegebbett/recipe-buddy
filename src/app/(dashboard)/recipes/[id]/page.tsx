@@ -15,10 +15,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {CreateRecipeInGrocySchema} from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema";
 import {Input} from "~/components/ui/input";
 import {Textarea} from "~/components/ui/textarea";
-
-// export const metadata = {
-//   title: "Dashboard",
-// }
+import { Button } from '~/components/ui/button';
 
 type RecipeWithIngredients = RouterOutputs["recipe"]["get"]
 export default async function DashboardPage(
@@ -27,6 +24,7 @@ export default async function DashboardPage(
   const {data: recipe, isLoading} = api.recipe.get.useQuery({
     id: parseInt(params.id),
   })
+
 
   return (
       <DashboardShell>
@@ -53,9 +51,12 @@ const RecipeForm = ({recipe}: { recipe: NonNullable<RecipeWithIngredients> }) =>
       method: recipe.steps
     },
   })
+  const {mutate, isLoading: mutLoading} = api.grocy.createRecipe.useMutation()
+
 
   return (
       <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(mutate)}>
         <DashboardHeader
             heading={form.watch("recipeName")}
             className="flex-col items-start gap-2"
@@ -76,6 +77,8 @@ const RecipeForm = ({recipe}: { recipe: NonNullable<RecipeWithIngredients> }) =>
               <Textarea {...field}/>
           )} name="method" control={form.control}/>
         </div>
+        <Button type="submit" disabled={mutLoading || !form.formState.isValid}>Create Recipe</Button>
+        </form>
       </FormProvider>
   )
 
