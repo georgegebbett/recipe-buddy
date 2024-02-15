@@ -4,7 +4,7 @@
 
 ## Update - May 2023
 
-I am painfully aware of all the issues that beset Recipe Buddy relating to Mongo not working on certain architectures, recipes not scraping properly etc, and I am almost finished with a complete rewrite using a much more modern and (hopefully) reliable stack. You can check progress out on the `t3-rewrite` branch. 
+I am painfully aware of all the issues that beset Recipe Buddy relating to Mongo not working on certain architectures, recipes not scraping properly etc, and I am almost finished with a complete rewrite using a much more modern and (hopefully) reliable stack. You can check progress out on the `v2-c` branch. 
 
 I am also actively seeking someone who likes writing frontend code more than me to collaborate on this - please do reach out in the [Discussions](https://github.com/georgegebbett/recipe-buddy/discussions) tab if you'd like to help!
 
@@ -22,13 +22,10 @@ Once the recipe has been extracted from the page, Recipe Buddy gives you a nice 
 
 "Well gee, George, that sounds mighty swell", I hear you say, "but how does little old me go about harnessing the TypeScript goblins for my own recipe-scraping requirements?"
 
-Well, dear reader, as I am a benevolent goblin-wrangler, I have imprisoned them in some poorly written Dockerfiles for you! All one needs to do to benefit from the gobliny goodness is as follows:
-
 1. Clone this repo into a directory of your choice: `git clone https://github.com/georgegebbett/recipe-buddy.git`
-2. Navigate into this new directory and utter the sacred incantation: `docker-compose up`
-3. Open your favourite browser like the intrepid web-o-naut you are, and visit port 4000 on the machine you ran the aforementioned command on
-4. ???
-5. Profit
+2. pnpm install
+3. pnpm run db:push
+4. pnpm run dev
 
 ## A disclaimer
 
