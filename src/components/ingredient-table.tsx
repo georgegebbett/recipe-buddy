@@ -10,6 +10,7 @@ import {
 } from "react-hook-form"
 
 import { Button } from "~/components/ui/button"
+import { FormField, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
 import {
   Table,
@@ -86,47 +87,58 @@ const IngredientTableRow = ({
         {ingredientName}
       </TableCell>
       <TableCell>
-        <Controller
+        <FormField
           render={({ field }) => (
-            <GrocyProductCombobox
-              baseUrl={grocyBaseUrl}
-              productName={ingredientName}
-              disabled={isRowIgnored}
-              value={field.value}
-              setValue={(a) => {
-                field.onChange(a)
-                const prod = products
-                  ? products.find((b) => b.id === a)
-                  : undefined
-                if (prod) {
-                  f.setValue(`ingredients.${index}.unitId`, prod.qu_id_stock)
-                }
-              }}
-            />
+            <>
+              <GrocyProductCombobox
+                baseUrl={grocyBaseUrl}
+                productName={ingredientName}
+                disabled={isRowIgnored}
+                value={field.value}
+                setValue={(a) => {
+                  field.onChange(a)
+                  const prod = products
+                    ? products.find((b) => b.id === a)
+                    : undefined
+                  if (prod) {
+                    f.setValue(`ingredients.${index}.unitId`, prod.qu_id_stock)
+                  }
+                }}
+              />
+              <FormMessage />
+            </>
           )}
           name={`ingredients.${index}.productId`}
           control={f.control}
         />
       </TableCell>
       <TableCell>
-        <Input
-          type="number"
-          disabled={isRowIgnored}
-          {...f.register(`ingredients.${index}.amount`)}
+        <FormField
+          render={({ field }) => (
+            <>
+              <Input type="number" disabled={isRowIgnored} {...field} />
+              <FormMessage />
+            </>
+          )}
+          name={`ingredients.${index}.amount`}
+          control={f.control}
         />
       </TableCell>
       <TableCell>
-        <Controller
+        <FormField
           render={({ field }) => (
-            <GrocyUnitCombobox
-              disabled={isRowIgnored}
-              value={field.value}
-              setValue={field.onChange}
-            />
+            <>
+              <GrocyUnitCombobox
+                disabled={isRowIgnored}
+                value={field.value}
+                setValue={field.onChange}
+              />
+              <FormMessage />
+            </>
           )}
           name={`ingredients.${index}.unitId`}
           control={f.control}
-        />{" "}
+        />
       </TableCell>
       <TableCell className="flex gap-2">
         <Controller
