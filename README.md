@@ -33,21 +33,23 @@ meal planning!
 "Well gee, George, that sounds mighty swell", I hear you say, "but how does little old me go about harnessing the
 TypeScript goblins for my own recipe-scraping requirements?"
 
-Well, dear reader, as I am a benevolent goblin-wrangler, I have imprisoned them in some poorly written Dockerfiles for
-you! All one needs to do to benefit from the gobliny goodness is as follows:
+Well, dear reader, as I am a benevolent goblin-wrangler, I have imprisoned them in a poorly written Dockerfile for you!
+All one needs to do to benefit from the gobliny goodness is as follows:
 
 1. Generate yourself an auth secret using `openssl rand -base64 32`
 2. Get the base url of your Grocy instance (everything up to the first `/`)
 3. Get an API key for your Grocy instance
 4. Run the following command:
     ```
-    docker run -p 3005:3000 -v rb_data:/home/node/app/data \
-    --env GROCY_API_KEY=YOUR_GROCY_API_KEY \ 
-    --env GROCY_BASE_URL=YOUR_GROCY_BASE_URL \
-    --env NEXTAUTH_SECRET=YOUR_NEXTAUTH_SECRET \
-    --env NEXTAUTH_URL=http://localhost:3005 \
-    recipe-buddy 
-    ```
+   docker run \
+     -p 3005:3000 \
+     -v rb_data1:/home/node/app/data \
+     --env GROCY_API_KEY=YOUR_GROCY_API_KEY \
+     --env GROCY_BASE_URL=YOUR_GROCY_BASE_URL \
+     --env NEXTAUTH_SECRET=YOUR_AUTH_SECRET \
+     --env NEXTAUTH_URL=http://localhost:3005 \
+     ghcr.io/georgegebbett/recipe-buddy
+   ```
 
 ## A disclaimer
 
