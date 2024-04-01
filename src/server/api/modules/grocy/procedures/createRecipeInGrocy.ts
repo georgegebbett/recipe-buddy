@@ -3,6 +3,7 @@ import {
   UnignoredIngredient,
 } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
 import { grocyFetch } from "~/server/api/modules/grocy/service/client"
+import { getGrocyProducts } from "~/server/api/modules/grocy/service/getGrocyProducts"
 import { deleteRecipe } from "~/server/api/modules/recipes/service/deleteRecipe"
 import { protectedProcedure } from "~/server/api/trpc"
 import normalizeUrl from "normalize-url"
@@ -16,6 +17,8 @@ export const createRecipeInGrocyProcedure = protectedProcedure
   .input(CreateRecipeInGrocySchema)
   .mutation(async ({ input }) => {
     let imageFilename: string | undefined = undefined
+
+    const grocyProducts = await getGrocyProducts()
 
     if (input.imageUrl) {
       const normalised = normalizeUrl(input.imageUrl, {
@@ -70,17 +73,27 @@ export const createRecipeInGrocyProcedure = protectedProcedure
     const recipeId = z.coerce.string().parse(recipeJson.created_object_id)
 
     const filteredIngredients = input.ingredients.filter(
-      (a): a is UnignoredIngredient => a.ignored === false
+      (a): a is UnignoredIngredient => !a.ignored
     )
 
     for (const ingredient of filteredIngredients) {
       logger.info(ingredient, `Creating ingredient [${ingredient.scrapedName}]`)
+
+      const grocyProduct = grocyProducts.find(
+        (a) => a.id === ingredient.productId
+      )
+
+      if (!grocyProduct) continue
+
+      const useAnyUnit: "1" | "0" =
+        ingredient.unitId === grocyProduct.qu_id_stock ? "0" : "1"
 
       const body = {
         recipe_id: recipeId,
         product_id: ingredient.productId,
         amount: ingredient.amount,
         qu_id: ingredient.unitId,
+        only_check_single_unit_in_stock: useAnyUnit,
       }
 
       const ingredientResponse = await grocyFetch("/objects/recipes_pos", {
@@ -90,6 +103,10 @@ export const createRecipeInGrocyProcedure = protectedProcedure
       })
 
       const ingredientJson = await ingredientResponse.json()
+
+      if (!ingredientResponse.ok) {
+        throw new Error(ingredientJson.error_message ?? "An error occurred")
+      }
 
       logger.info(ingredientJson, "Ingredient created")
     }
