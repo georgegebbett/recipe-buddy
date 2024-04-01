@@ -1,3 +1,4 @@
+import { deleteRecipeProcedure } from "~/server/api/modules/recipes/procedures/deleteRecipe"
 import { getRecipeByIdProcedure } from "~/server/api/modules/recipes/procedures/getById"
 import { listRecipesProcedure } from "~/server/api/modules/recipes/procedures/listRecipes"
 import { scrapeRecipeProcedure } from "~/server/api/modules/recipes/procedures/scrapeRecipe"
@@ -23,4 +24,5 @@ export const recipeRouter = createTRPCRouter({
   scrape: scrapeRecipeProcedure,
   list: listRecipesProcedure,
   get: getRecipeByIdProcedure,
+  delete: deleteRecipeProcedure,
 })

@@ -1,7 +1,7 @@
-import { CreateUserSchema } from '~/server/api/modules/users/procedures/createUserSchema';
-import { protectedProcedure } from '~/server/api/trpc';
-import z from 'zod';
-import { createUser } from '~/server/api/modules/users/service/createUser';
+import { CreateUserSchema } from "~/server/api/modules/users/procedures/createUserSchema"
+import { createUser } from "~/server/api/modules/users/service/createUser"
+import { protectedProcedure } from "~/server/api/trpc"
+import z from "zod"
 
 export const createUserProcedure = protectedProcedure
   .input(CreateUserSchema)
@@ -13,5 +13,5 @@ export const createUserProcedure = protectedProcedure
     })
   )
   .mutation(async ({ input }) => {
-   return createUser(input)
+    return createUser(input)
   })

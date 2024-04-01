@@ -38,9 +38,11 @@ import { Input } from "~/components/ui/input"
 import { Icons } from "~/components/icons"
 
 interface NewRecipeDialogProps extends ButtonProps {}
-export const NewRecipeDialog = (
-  { className, variant, ...props }: NewRecipeDialogProps
-) => {
+export const NewRecipeDialog = ({
+  className,
+  variant,
+  ...props
+}: NewRecipeDialogProps) => {
   const [open, setOpen] = useState(false)
 
   const form = useForm<ScrapeRecipe>({

@@ -1,67 +1,83 @@
 FROM node:18-alpine AS base
 
-# Install dependencies only when needed
-FROM base AS deps
+# mostly inspired from https://github.com/BretFisher/node-docker-good-defaults/blob/main/Dockerfile & https://github.com/remix-run/example-trellix/blob/main/Dockerfile
+
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
+# set the store dir to a folder that is not in the project
+RUN pnpm config set store-dir ~/.pnpm-store
+RUN pnpm fetch
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+FROM base AS deps
+USER node
+# WORKDIR now sets correct permissions if you set USER first so `USER node` has permissions on `/app` directory
+WORKDIR /home/node/app
+COPY --chown=node:node package.json pnpm-lock.yaml* ./
 
+USER root
 
-# Rebuild the source code only when needed
+RUN pnpm install
+
+FROM base as production-deps
+WORKDIR /home/node/app
+
+COPY --from=deps --chown=node:node /home/node/app/node_modules ./node_modules
+COPY --chown=node:node package.json pnpm-lock.yaml* ./
+RUN pnpm prune --prod
+
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+WORKDIR /home/node/app
+COPY --from=deps --chown=node:node /home/node/app/node_modules ./node_modules
+COPY --chown=node:node src/server/db/drizzle ./migrations
+COPY --chown=node:node . .
+
+#RUN pnpm install --offline
+
+ENV SKIP_ENV_VALIDATION=1
 
 RUN pnpm build
 
-# If using npm comment out above and use below instead
-# RUN npm run build
-
-# Production image, copy all the files and run next
 FROM base AS runner
-WORKDIR /app
+WORKDIR /home/node/app
+
+RUN apk add --no-cache dumb-init
 
 ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV DATABASE_URL="/home/node/app/data/sqlite.db"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN mkdir data
 
-COPY --from=builder /app/public ./public
+VOLUME "/home/node/app/data"
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+COPY --from=builder /home/node/app/next.config.js ./
+COPY --from=builder /home/node/app/public ./public
+COPY --from=builder /home/node/app/package.json ./package.json
+COPY --from=production-deps --chown=node:node home/node/app/node_modules ./node_modules
+
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Some things are not allowed (see https://github.com/vercel/next.js/issues/38119#issuecomment-1172099259)
+COPY --from=builder --chown=node:node /home/node/app/.next/standalone ./
+COPY --from=builder --chown=node:node /home/node/app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /home/node/app/src/server/db ./db
 
-USER nextjs
+COPY --from=builder --chown=node:node /home/node/app/migrations ./migrations
+
+# Move the run script and litestream config to the runtime image
+COPY --chown=node:node src/server/db/ ./migrations
+COPY --chown=node:node scripts/run.sh ./run.sh
+
+RUN npx tsc -b ./migrations
 
 EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME 0.0.0.0
+ENV NEXTAUTH_URL_INTERNAL http://0.0.0.0:3000
 
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+RUN chmod +x ./run.sh
+
+CMD ["dumb-init", "--", "./run.sh"]

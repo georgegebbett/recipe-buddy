@@ -4,7 +4,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Command,
+  CookingPot,
   CreditCard,
   File,
   FileText,
@@ -23,10 +23,7 @@ import {
   Twitter,
   User,
   X,
-  type LucideIcon, CookingPot,
 } from "lucide-react"
-
-export type Icon = LucideIcon
 
 export const Icons = {
   logo: CookingPot,

@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation"
-
 // import { UserNameForm } from "@/components/user-name-form"
-import {authOptions} from "~/server/auth";
-import {getCurrentUser} from "~/lib/session";
-import {DashboardShell} from "~/components/shell";
-import {DashboardHeader} from "~/components/header";
-import {GrocyStatus} from "~/components/grocy-status";
-import {NewUserDialog} from "~/components/new-user-dialog";
-import {UserTable} from "~/components/user-table";
+import { authOptions } from "~/server/auth"
+
+import { getCurrentUser } from "~/lib/session"
+import { GrocyStatus } from "~/components/grocy-status"
+import { DashboardHeader } from "~/components/header"
+import { NewUserDialog } from "~/components/new-user-dialog"
+import { DashboardShell } from "~/components/shell"
+import { UserTable } from "~/components/user-table"
 
 export const metadata = {
   title: "Settings",
@@ -21,15 +21,12 @@ export default async function SettingsPage() {
     redirect(authOptions?.pages?.signIn || "/login")
   }
 
-
   return (
     <DashboardShell>
-      <DashboardHeader
-        heading="Settings"
-      />
+      <DashboardHeader heading="Settings" />
       <div className="grid gap-10">
-        <GrocyStatus/>
-        <UserTable/>
+        <GrocyStatus />
+        <UserTable />
       </div>
     </DashboardShell>
   )

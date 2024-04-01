@@ -6,13 +6,6 @@ import {
   text,
 } from "drizzle-orm/sqlite-core"
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-
 export const sqLiteTable = sqliteTableCreator((name) => `recipe-buddy_${name}`)
 
 export const recipes = sqLiteTable("recipe", {
@@ -34,7 +27,7 @@ export const ingredients = sqLiteTable("ingredient", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   scrapedName: text("scrapedName").notNull(),
   recipeId: integer("recipeId")
-    .references(() => recipes.id)
+    .references(() => recipes.id, { onDelete: "cascade" })
     .notNull(),
 })
 

@@ -7,9 +7,12 @@ interface DashboardHeaderProps {
   className?: string
 }
 
-export function DashboardHeader(
-  { heading, text, children, className }: DashboardHeaderProps
-) {
+export function DashboardHeader({
+  heading,
+  text,
+  children,
+  className,
+}: DashboardHeaderProps) {
   return (
     <div className={cn("flex items-center justify-between px-2", className)}>
       <div className="grid gap-1">

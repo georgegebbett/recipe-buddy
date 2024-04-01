@@ -1,5 +1,3 @@
-import { User } from "@prisma/client"
-
 import { Icons } from "~/components/icons"
 
 export type NavItem = {
@@ -56,9 +54,3 @@ export type SubscriptionPlan = {
   description: string
   stripePriceId: string
 }
-
-export type UserSubscriptionPlan = SubscriptionPlan &
-  Pick<User, "stripeCustomerId" | "stripeSubscriptionId"> & {
-    stripeCurrentPeriodEnd: number
-    isPro: boolean
-  }

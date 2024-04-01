@@ -10,8 +10,9 @@ import {
   CardImage,
   CardTitle,
 } from "~/components/ui/card"
+import { DeleteRecipeButton } from "~/components/delete-recipe-button"
 
-export type RecipeCardProps = {
+type RecipeCardProps = {
   recipe: Pick<Recipe, "name" | "id" | "imageUrl">
 }
 
@@ -29,7 +30,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <CardTitle className="text-xl">{recipe.name}</CardTitle>
       </CardHeader>
       <CardFooter className="justify-between">
-        <Button variant="destructive">Delete</Button>
+        <DeleteRecipeButton recipeId={recipe.id} />
         <Link href={ROUTES.recipes.details(recipe.id)}>
           <Button>Add</Button>
         </Link>
