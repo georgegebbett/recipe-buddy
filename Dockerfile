@@ -19,7 +19,7 @@ USER root
 
 RUN pnpm install
 
-FROM base as production-deps
+FROM base AS production-deps
 WORKDIR /home/node/app
 
 COPY --from=deps --chown=node:node /home/node/app/node_modules ./node_modules

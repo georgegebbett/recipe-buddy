@@ -20,7 +20,7 @@ export const env = createEnv({
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
       (str) => process.env.VERCEL_URL ?? str,
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string() : z.string()
+      process.env.VERCEL ? z.string() : z.string().url()
     ),
     GROCY_BASE_URL: z.string(),
     GROCY_API_KEY: z.string(),

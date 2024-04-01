@@ -86,7 +86,7 @@ function RecipeFormInner({
           </Link>
         </DashboardHeader>
         <div className="flex flex-col gap-2">
-          <IngredientTable grocyBaseUrl={grocyBaseUrl || ""} />
+          <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} />
           <Button type="submit" isLoading={mutLoading} className="self-end">
             Create Recipe
           </Button>
