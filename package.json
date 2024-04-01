@@ -86,7 +86,6 @@
     "pino-pretty": "^10.3.1",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.3.5"
   },
   "ct3aMetadata": {
