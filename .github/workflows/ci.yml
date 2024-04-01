@@ -23,5 +23,14 @@ jobs:
       - name: Check
         run: pnpm check
 
-      - name: Knip
-        uses: ./.github/actions/knip
+  knip:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/build-setup
+
+      - name: Check
+        run: pnpm knip
