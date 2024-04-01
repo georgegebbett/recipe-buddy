@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": [
+    "src/components/ui/*.tsx",
+    "src/trpc/**.*"
+  ],
+  "ignoreDependencies": [
+    "@radix-ui/*",
+    "server-only"
+  ]
+}

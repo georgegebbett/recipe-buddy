@@ -1,0 +1,8 @@
+name: 'Format'
+description: 'Ensures the repo matches Prettier rules'
+runs:
+  using: "composite"
+  steps:
+    - name: Format
+      shell: bash
+      run: pnpm format

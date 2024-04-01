@@ -1,0 +1,10 @@
+name: 'Lint'
+description: 'Lints the repository'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Lint
+      shell: bash
+      run: pnpm lint
+
