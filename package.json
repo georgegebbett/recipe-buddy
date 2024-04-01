@@ -15,7 +15,7 @@
     "lint": "SKIP_ENV_VALIDATION=1 next lint",
     "lint:fix": "next lint --fix",
     "start": "next start",
-    "format": "SKIP_ENV_VALIDATION=1 prettier -l -c src --ignore-path .gitignore",
+    "format": "SKIP_ENV_VALIDATION=1 prettier -c src --ignore-path .gitignore",
     "format:fix": "prettier -l -w src --ignore-path .gitignore",
     "knip": "SKIP_ENV_VALIDATION=1 knip"
   },
