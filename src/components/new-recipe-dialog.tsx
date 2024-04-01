@@ -1,17 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import * as React from "react"
+import { useState } from "react"
 import { DialogBody } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   ScrapeRecipe,
   ScrapeRecipeSchema,
 } from "~/server/api/modules/recipes/procedures/scrapeRecipeSchema"
-import {
-  CreateUser,
-  CreateUserSchema,
-} from "~/server/api/modules/users/procedures/createUserSchema"
 import { api } from "~/trpc/react"
 import { useForm } from "react-hook-form"
 
@@ -89,7 +85,7 @@ export const NewRecipeDialog = ({
           <Form {...form}>
             <form id="addRecipe" onSubmit={form.handleSubmit((a) => mutate(a))}>
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>

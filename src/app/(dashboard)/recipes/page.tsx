@@ -9,7 +9,7 @@ import { RecipeCard } from "~/components/recipe-card"
 import { DashboardShell } from "~/components/shell"
 
 export default function DashboardPage() {
-  const { data: recipes, isLoading } = api.recipe.list.useQuery()
+  const { data: recipes } = api.recipe.list.useQuery()
 
   return (
     <DashboardShell>

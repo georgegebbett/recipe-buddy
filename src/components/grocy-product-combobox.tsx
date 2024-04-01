@@ -42,8 +42,34 @@ export function GrocyProductCombobox({
 
   const newProductSlug = `/product/new?closeAfterCreation&flow=InplaceNewProductWithName&name=${productName}`
 
-  const createNewProduct = () => {
-    // utils.grocy.getProducts.
+  const onCreateNewProduct = () => {
+    window.addEventListener("visibilitychange", onRefocusAfterCreateProduct)
+    window.open(`${baseUrl}${newProductSlug}`)
+  }
+
+  const onRefocusAfterCreateProduct = async () => {
+    if (document.visibilityState === "visible") {
+      await utils.grocy.getProducts.invalidate()
+      await utils.grocy.getProducts.refetch()
+
+      const prods = await utils.grocy.getProducts.ensureData()
+
+      const [highestProd] = prods.sort(
+        (a, b) => parseInt(b.id) - parseInt(a.id)
+      )
+
+      console.log("gighest prod")
+      console.log(highestProd)
+
+      if (highestProd) {
+        setValue(highestProd.id)
+      }
+
+      window.removeEventListener(
+        "visibilitychange",
+        onRefocusAfterCreateProduct
+      )
+    }
   }
 
   return (
@@ -70,10 +96,7 @@ export function GrocyProductCombobox({
             <CommandInput placeholder="Search products..." />
             <CommandEmpty>No product found</CommandEmpty>
             <CommandGroup>
-              <CommandItem
-                value="add"
-                onSelect={() => window.open(`${baseUrl}${newProductSlug}`)}
-              >
+              <CommandItem value="add" onSelect={onCreateNewProduct}>
                 <div className="flex items-center gap-2">
                   <PlusCircleIcon className="h-4 w-4 fill-black text-white" />
                   <p>Add Product</p>

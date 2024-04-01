@@ -9,7 +9,7 @@ const grocyProductSchema = z.object({
 })
 
 export const getGrocyProductsProcedure = protectedProcedure.query(async () => {
-  const prods = await grocyFetch("/objects/products")
+  const prods = await grocyFetch("/objects/products", { cache: "no-cache" })
 
   const json = await prods.json()
 

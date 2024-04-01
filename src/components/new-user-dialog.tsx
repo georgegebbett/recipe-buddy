@@ -81,7 +81,7 @@ export const NewUserDialog = () => {
           <Form {...form}>
             <form id="addUser" onSubmit={form.handleSubmit((a) => mutate(a))}>
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
@@ -95,7 +95,7 @@ export const NewUserDialog = () => {
                 control={form.control}
               />
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
@@ -111,7 +111,7 @@ export const NewUserDialog = () => {
                 control={form.control}
               />
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>

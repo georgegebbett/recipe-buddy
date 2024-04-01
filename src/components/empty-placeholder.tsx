@@ -43,7 +43,7 @@ EmptyPlaceholder.Icon = function EmptyPlaceHolderIcon({
 
   return (
     <div className="bg-muted flex h-20 w-20 items-center justify-center rounded-full">
-      {/*@ts-ignore*/}
+      {/*@ts-expect-error Icons are problematic*/}
       <Icon className={cn("h-10 w-10", className)} {...props} />
     </div>
   )

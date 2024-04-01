@@ -130,7 +130,7 @@ const IngredientTableRow = ({
       </TableCell>
       <TableCell className="flex gap-2">
         <Controller
-          render={({ field, fieldState, formState }) => {
+          render={({ field }) => {
             return (
               <Button onClick={() => field.onChange(!field.value)}>
                 {field.value ? "Unignore" : "Ignore"}

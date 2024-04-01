@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
 
         if (credentials) {
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt({ token, profile, user }) {
+    jwt({ token, user }) {
       if (user) {
         token.id = user.id
       }

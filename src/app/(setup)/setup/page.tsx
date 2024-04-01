@@ -63,7 +63,7 @@ export default function Page() {
           <Form {...form}>
             <form id="setupUser" onSubmit={form.handleSubmit((a) => mutate(a))}>
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
@@ -77,7 +77,7 @@ export default function Page() {
                 control={form.control}
               />
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
@@ -93,7 +93,7 @@ export default function Page() {
                 control={form.control}
               />
               <FormField
-                render={({ field, fieldState, formState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>

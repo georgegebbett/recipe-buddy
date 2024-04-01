@@ -30,9 +30,9 @@ export function MainNav({ items, children }: MainNavProps) {
       </Link>
       {items?.length ? (
         <nav className="hidden gap-6 md:flex">
-          {items?.map((item, index) => (
+          {items?.map((item) => (
             <Link
-              key={index}
+              key={item.href}
               href={item.disabled ? "#" : item.href}
               className={cn(
                 "hover:text-foreground/80 flex items-center text-lg font-medium transition-colors sm:text-sm",

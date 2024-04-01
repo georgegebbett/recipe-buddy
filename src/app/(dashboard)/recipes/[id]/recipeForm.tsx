@@ -22,7 +22,7 @@ type RecipeFormProps = {
 }
 
 export function RecipeForm({ recipeId, grocyBaseUrl }: RecipeFormProps) {
-  const { data: recipe, isLoading } = api.recipe.get.useQuery({
+  const { data: recipe } = api.recipe.get.useQuery({
     id: recipeId,
   })
 

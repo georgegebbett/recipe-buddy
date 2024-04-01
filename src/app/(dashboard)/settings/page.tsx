@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation"
-// import { UserNameForm } from "@/components/user-name-form"
 import { authOptions } from "~/server/auth"
 
 import { getCurrentUser } from "~/lib/session"
 import { GrocyStatus } from "~/components/grocy-status"
 import { DashboardHeader } from "~/components/header"
-import { NewUserDialog } from "~/components/new-user-dialog"
 import { DashboardShell } from "~/components/shell"
 import { UserTable } from "~/components/user-table"
 
