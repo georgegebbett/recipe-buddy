@@ -1,0 +1,28 @@
+name: Code Style Check
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/build-setup
+
+      - name: Lint
+        uses: ./.github/actions/lint
+
+  format:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/build-setup
+
+      - name: Format
+        uses: ./.github/actions/format
