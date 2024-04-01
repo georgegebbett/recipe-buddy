@@ -1,0 +1,10 @@
+name: 'Knip'
+description: 'Runs Knip against the repository'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Knip
+      shell: bash
+      run: pnpm knip
+

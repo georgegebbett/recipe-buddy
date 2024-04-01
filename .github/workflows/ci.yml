@@ -22,3 +22,6 @@ jobs:
 
       - name: Check
         run: pnpm check
+
+      - name: Knip
+        uses: ./.github/actions/knip
