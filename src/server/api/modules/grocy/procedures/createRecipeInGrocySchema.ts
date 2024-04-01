@@ -7,7 +7,7 @@ const IgnoredIngredientSchema = z.object({
 
 const UnignoredIngredientSchema = z.object({
   productId: z.string(),
-  amount: z.number(),
+  amount: z.coerce.number(),
   unitId: z.string(),
   scrapedName: z.string(),
   ignored: z.literal(false),
