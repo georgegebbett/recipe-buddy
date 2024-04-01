@@ -20,5 +20,3 @@ export const RecipeImageUrlSchema = z
 export const JsonLdRecipeSchema = z.object({
   "@type": z.string(),
 })
-
-export type JsonLdRecipe = z.infer<typeof JsonLdRecipeSchema>
