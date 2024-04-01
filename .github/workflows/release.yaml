@@ -36,6 +36,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: georgegebbett/recipe-buddy:latest
+          tags: ghcr.io/georgegebbett/recipe-buddy:latest
 
 
