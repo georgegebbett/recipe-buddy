@@ -11,6 +11,8 @@ const UnignoredIngredientSchema = z.object({
   unitId: z.string(),
   scrapedName: z.string(),
   ignored: z.literal(false),
+  note: z.string().trim().optional(),
+  group: z.string().trim().optional(),
 })
 
 export type UnignoredIngredient = z.infer<typeof UnignoredIngredientSchema>
@@ -19,7 +21,7 @@ const IngredientSchema = z.union([
   UnignoredIngredientSchema,
   IgnoredIngredientSchema,
 ])
-export const CreateRecipeInGrocySchema = z.object({
+export const CreateRecipeInGrocyCommandSchema = z.object({
   recipeBuddyRecipeId: z.number(),
   recipeName: z.string().trim().min(1),
   ingredients: IngredientSchema.array(),
@@ -27,4 +29,6 @@ export const CreateRecipeInGrocySchema = z.object({
   imageUrl: z.string().url().optional(),
 })
 
-export type CreateRecipeInGrocy = z.infer<typeof CreateRecipeInGrocySchema>
+export type CreateRecipeInGrocyCommand = z.infer<
+  typeof CreateRecipeInGrocyCommandSchema
+>

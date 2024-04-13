@@ -11,6 +11,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
   CommandSeparator,
 } from "~/components/ui/command"
 import {
@@ -94,30 +95,32 @@ export function GrocyProductCombobox({
         <PopoverContent className="w-[200px] p-0">
           <Command>
             <CommandInput placeholder="Search products..." />
-            <CommandEmpty>No product found</CommandEmpty>
-            <CommandGroup>
-              <CommandItem value="add" onSelect={onCreateNewProduct}>
-                <div className="flex items-center gap-2">
-                  <PlusCircleIcon className="h-4 w-4 fill-black text-white" />
-                  <p>Add Product</p>
-                </div>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup className="max-h-52 overflow-y-scroll">
-              {data.map((product) => (
-                <CommandItem
-                  key={product.id}
-                  value={product.name}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === product.id ? "" : product.id)
-                    setOpen(false)
-                  }}
-                >
-                  {product.name}
+            <CommandList>
+              <CommandEmpty>No product found</CommandEmpty>
+              <CommandGroup>
+                <CommandItem value="add" onSelect={onCreateNewProduct}>
+                  <div className="flex items-center gap-2">
+                    <PlusCircleIcon className="h-4 w-4 fill-black text-white" />
+                    <p>Add Product</p>
+                  </div>
                 </CommandItem>
-              ))}
-            </CommandGroup>
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup className="max-h-52 overflow-y-scroll">
+                {data.map((product) => (
+                  <CommandItem
+                    key={product.id}
+                    value={product.name}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === product.id ? "" : product.id)
+                      setOpen(false)
+                    }}
+                  >
+                    {product.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

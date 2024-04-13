@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { api } from "~/trpc/react"
 import { ChevronsUpDown } from "lucide-react"
@@ -11,6 +9,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "~/components/ui/command"
 import {
   Popover,
@@ -51,21 +50,23 @@ export function GrocyUnitCombobox({
         <PopoverContent className="w-[200px] p-0">
           <Command>
             <CommandInput placeholder="Search units..." />
-            <CommandEmpty>No product found.</CommandEmpty>
-            <CommandGroup className="max-h-52 overflow-y-scroll">
-              {data.map((product) => (
-                <CommandItem
-                  key={product.id}
-                  value={product.name}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === product.id ? "" : product.id)
-                    setOpen(false)
-                  }}
-                >
-                  {product.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            <CommandList>
+              <CommandEmpty>No product found.</CommandEmpty>
+              <CommandGroup className="max-h-52 overflow-y-scroll">
+                {data.map((product) => (
+                  <CommandItem
+                    key={product.id}
+                    value={product.name}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === product.id ? "" : product.id)
+                      setOpen(false)
+                    }}
+                  >
+                    {product.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

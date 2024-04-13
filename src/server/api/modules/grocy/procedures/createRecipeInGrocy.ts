@@ -1,5 +1,5 @@
 import {
-  CreateRecipeInGrocySchema,
+  CreateRecipeInGrocyCommandSchema,
   UnignoredIngredient,
 } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
 import { grocyFetch } from "~/server/api/modules/grocy/service/client"
@@ -14,7 +14,7 @@ import z from "zod"
 import { logger } from "~/lib/logger"
 
 export const createRecipeInGrocyProcedure = protectedProcedure
-  .input(CreateRecipeInGrocySchema)
+  .input(CreateRecipeInGrocyCommandSchema)
   .mutation(async ({ input }) => {
     let imageFilename: string | undefined = undefined
 
@@ -94,6 +94,8 @@ export const createRecipeInGrocyProcedure = protectedProcedure
         amount: ingredient.amount,
         qu_id: ingredient.unitId,
         only_check_single_unit_in_stock: useAnyUnit,
+        note: ingredient.note,
+        ingredient_group: ingredient.group,
       }
 
       const ingredientResponse = await grocyFetch("/objects/recipes_pos", {
