@@ -4,8 +4,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
-  CreateRecipeInGrocy,
-  CreateRecipeInGrocySchema,
+  CreateRecipeInGrocyCommand,
+  CreateRecipeInGrocyCommandSchema,
 } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
 import { api } from "~/trpc/react"
 import { RouterOutputs } from "~/trpc/shared"
@@ -40,8 +40,8 @@ function RecipeFormInner({
   recipe: NonNullable<RecipeWithIngredients>
   grocyBaseUrl?: string
 }) {
-  const form = useForm<CreateRecipeInGrocy>({
-    resolver: zodResolver(CreateRecipeInGrocySchema),
+  const form = useForm<CreateRecipeInGrocyCommand>({
+    resolver: zodResolver(CreateRecipeInGrocyCommandSchema),
     defaultValues: {
       ingredients: recipe.ingredients.map((a) => {
         const amount = /\d+/g.exec(a.scrapedName)
@@ -67,7 +67,7 @@ function RecipeFormInner({
     },
   })
 
-  const onSubmit = (a: CreateRecipeInGrocy) => mutate(a)
+  const onSubmit = (a: CreateRecipeInGrocyCommand) => mutate(a)
 
   return (
     <FormProvider {...form}>

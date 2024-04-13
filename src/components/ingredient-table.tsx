@@ -1,7 +1,9 @@
 "use client"
 
-import { CreateRecipeInGrocy } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
+import { useState } from "react"
+import { CreateRecipeInGrocyCommand } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
 import { api } from "~/trpc/react"
+import { SquarePen } from "lucide-react"
 import {
   Controller,
   FormProvider,
@@ -21,6 +23,8 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { GrocyUnitCombobox } from "~/components/grocy-unit-combobox"
+import { IngredientGroupCombobox } from "~/components/ingredient-group-combobox"
+import { IngredientNoteDialog } from "~/components/ingredient-note-dialog"
 
 import { GrocyProductCombobox } from "./grocy-product-combobox"
 
@@ -29,9 +33,14 @@ type IngredientTableProps = {
 }
 
 export function IngredientTable({ grocyBaseUrl }: IngredientTableProps) {
-  const f = useFormContext<CreateRecipeInGrocy>()
+  const f = useFormContext<CreateRecipeInGrocyCommand>()
 
-  const { fields } = useFieldArray<CreateRecipeInGrocy>({
+  const [groups, setGroups] = useState<string[]>([])
+
+  const addGroup = (groupName: string) =>
+    setGroups((old) => [groupName, ...old])
+
+  const { fields } = useFieldArray<CreateRecipeInGrocyCommand>({
     name: "ingredients",
     control: f.control,
   })
@@ -45,6 +54,8 @@ export function IngredientTable({ grocyBaseUrl }: IngredientTableProps) {
             <TableHead>Product</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Unit</TableHead>
+            <TableHead>Group</TableHead>
+            <TableHead>Note</TableHead>
             <TableHead>Ignore</TableHead>
           </TableRow>
         </TableHeader>
@@ -56,6 +67,8 @@ export function IngredientTable({ grocyBaseUrl }: IngredientTableProps) {
                 key={a.id}
                 index={i}
                 grocyBaseUrl={grocyBaseUrl}
+                addGroup={addGroup}
+                groups={groups}
                 {...a}
               />
             ))}
@@ -70,12 +83,16 @@ const IngredientTableRow = ({
   ingredientName,
   index,
   grocyBaseUrl,
+  groups,
+  addGroup,
 }: {
   ingredientName: string
   index: number
   grocyBaseUrl: string
+  groups: string[]
+  addGroup: (newGroup: string) => void
 }) => {
-  const f = useFormContext<CreateRecipeInGrocy>()
+  const f = useFormContext<CreateRecipeInGrocyCommand>()
 
   const { data: products } = api.grocy.getProducts.useQuery()
 
@@ -140,7 +157,45 @@ const IngredientTableRow = ({
           control={f.control}
         />
       </TableCell>
-      <TableCell className="flex gap-2">
+      <TableCell>
+        <FormField
+          render={({ field }) => (
+            <>
+              <IngredientGroupCombobox
+                disabled={isRowIgnored}
+                setValue={field.onChange}
+                groups={groups}
+                addGroup={addGroup}
+                value={field.value}
+              />
+              <FormMessage />
+            </>
+          )}
+          name={`ingredients.${index}.group`}
+          control={f.control}
+        />
+      </TableCell>
+      <TableCell>
+        <Controller
+          render={({ field }) => {
+            return (
+              <IngredientNoteDialog {...field}>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  data-has-note={field.value && field.value.trim().length > 0}
+                  className="data-[has-note=true]:bg-green-200"
+                >
+                  <SquarePen strokeWidth={1} className={"h-4 w-4"} />
+                </Button>
+              </IngredientNoteDialog>
+            )
+          }}
+          name={`ingredients.${index}.note`}
+          control={f.control}
+        />
+      </TableCell>
+      <TableCell>
         <Controller
           render={({ field }) => {
             return (
