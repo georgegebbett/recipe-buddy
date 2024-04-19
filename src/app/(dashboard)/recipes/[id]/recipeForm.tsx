@@ -9,12 +9,12 @@ import {
 } from "~/server/api/modules/grocy/procedures/createRecipeInGrocySchema"
 import { api } from "~/trpc/react"
 import { RouterOutputs } from "~/trpc/shared"
-import { FormProvider, useForm } from "react-hook-form"
+import { Controller, FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "~/components/ui/button"
-import { DashboardHeader } from "~/components/header"
 import { IngredientTable } from "~/components/ingredient-table"
+import { RecipeTitleInput } from "~/components/recipe-title-input"
 
 type RecipeFormProps = {
   recipeId: number
@@ -73,18 +73,22 @@ function RecipeFormInner({
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <input hidden {...form.register("recipeBuddyRecipeId")} />
-        <DashboardHeader
-          heading={recipe.name}
-          className="flex-col items-start gap-2"
-        >
+        <div className="flex flex-col gap-2">
+          <Controller
+            render={({ field }) => (
+              <RecipeTitleInput value={field.value} onChange={field.onChange} />
+            )}
+            name="recipeName"
+            control={form.control}
+          />
           <Link
             href={recipe.url}
-            className="text-muted-foreground text-lg"
+            className="text-muted-foreground pl-1 text-lg"
             target="_blank"
           >
             View Original
           </Link>
-        </DashboardHeader>
+        </div>
         <div className="flex flex-col gap-2">
           <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} />
           <Button type="submit" isLoading={mutLoading} className="self-end">
