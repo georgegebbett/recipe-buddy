@@ -18,5 +18,23 @@ export const RecipeImageUrlSchema = z
   })
 
 export const JsonLdRecipeSchema = z.object({
-  "@type": z.string(),
+  "@type": z.union([z.string(), z.tuple([z.string()]).transform((a) => a[0])]),
+})
+
+export const ExtractNumberSchema = z.coerce.string().transform((val, ctx) => {
+  const numberRegex = /\d+/g
+
+  const regexResult = numberRegex.exec(val)
+
+  if (!regexResult) {
+    ctx.addIssue({
+      message: "No numbers found in servings",
+      code: "custom",
+    })
+    return z.NEVER
+  }
+
+  const [first] = regexResult
+
+  return parseInt(first)
 })

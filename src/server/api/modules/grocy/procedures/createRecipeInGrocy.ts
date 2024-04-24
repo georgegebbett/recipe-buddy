@@ -58,6 +58,7 @@ export const createRecipeInGrocyProcedure = protectedProcedure
       name: input.recipeName,
       description: input.method,
       picture_file_name: imageFilename,
+      base_servings: input.servings,
     }
 
     const recipeResponse = await grocyFetch("/objects/recipes", {
