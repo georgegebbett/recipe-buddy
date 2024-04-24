@@ -14,6 +14,7 @@ export const recipes = sqLiteTable("recipe", {
   url: text("url", { length: 512 }).notNull(),
   steps: text("steps"),
   imageUrl: text("imageUrl", { length: 256 }),
+  servings: integer("servings", { mode: "number" }),
 })
 
 export const recipeRelations = relations(recipes, ({ many }) => ({

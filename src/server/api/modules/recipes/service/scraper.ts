@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server"
 import {
+  ExtractNumberSchema,
   JsonLdRecipeSchema,
   RecipeImageUrlSchema,
   RecipeStepSchema,
@@ -62,6 +63,7 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
     }
 
     if (Array.isArray(parsedNodeContent)) {
+      console.log("its an array")
       for (const metadataObject of parsedNodeContent) {
         if (jsonObjectIsRecipe(metadataObject)) {
           return metadataObject
@@ -106,11 +108,14 @@ export async function hydrateRecipe(url: string) {
     (a) => ({ scrapedName: a })
   )
 
+  const servings = ExtractNumberSchema.safeParse(recipeData.recipeYield)
+
   const recipe: InsertRecipe = {
     name: recipeData.name,
     url,
     steps: steps.data.join("\n"),
     imageUrl: image.success ? image.data : undefined,
+    servings: servings.success ? servings.data : undefined,
   }
 
   return { recipe, ingredients: ings }

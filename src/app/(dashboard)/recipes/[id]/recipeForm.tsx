@@ -13,6 +13,14 @@ import { Controller, FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "~/components/ui/button"
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form"
+import { Input } from "~/components/ui/input"
 import { IngredientTable } from "~/components/ingredient-table"
 import { RecipeTitleInput } from "~/components/recipe-title-input"
 
@@ -52,9 +60,10 @@ function RecipeFormInner({
         }
       }),
       recipeName: recipe.name,
-      method: recipe.steps || undefined,
-      imageUrl: recipe.imageUrl || undefined,
+      method: recipe.steps ?? undefined,
+      imageUrl: recipe.imageUrl ?? undefined,
       recipeBuddyRecipeId: recipe.id,
+      servings: recipe.servings ?? undefined,
     },
   })
 
@@ -79,6 +88,19 @@ function RecipeFormInner({
               <RecipeTitleInput value={field.value} onChange={field.onChange} />
             )}
             name="recipeName"
+            control={form.control}
+          />
+          <FormField
+            render={({ field }) => (
+              <FormItem className="flex items-center gap-2">
+                <FormLabel>Servings</FormLabel>
+                <FormControl>
+                  <Input className="max-w-[70px]" type="number" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+            name="servings"
             control={form.control}
           />
           <Link

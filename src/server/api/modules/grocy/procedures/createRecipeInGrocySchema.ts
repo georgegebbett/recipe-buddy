@@ -21,12 +21,27 @@ const IngredientSchema = z.union([
   UnignoredIngredientSchema,
   IgnoredIngredientSchema,
 ])
+
+const numberLike = z.union([z.number(), z.string()])
+const numberLikeToNumberAtLeastOne = numberLike
+  .pipe(
+    z.coerce
+      .number()
+      .int("Must be a whole number")
+      .min(0, "Must be a positive number")
+  )
+  .transform((a) => {
+    if (a < 1) return 1
+    return a
+  })
+
 export const CreateRecipeInGrocyCommandSchema = z.object({
   recipeBuddyRecipeId: z.number(),
   recipeName: z.string().trim().min(1),
   ingredients: IngredientSchema.array(),
   method: z.string().optional(),
   imageUrl: z.string().url().optional(),
+  servings: numberLikeToNumberAtLeastOne.optional(),
 })
 
 export type CreateRecipeInGrocyCommand = z.infer<
