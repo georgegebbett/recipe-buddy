@@ -8,7 +8,7 @@
     "build": "next build",
     "check": "tsc --noEmit",
     "db:push": "dotenv drizzle-kit push:sqlite",
-    "db:migrate:dev": "dotenv tsx src/server/db/migrate-dev.ts",
+    "db:migrate:dev": "dotenv tsx src/server/db/migrate.ts",
     "db:migrate": "node migrations/drizzle-migrate.mjs",
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev | pino-pretty",
