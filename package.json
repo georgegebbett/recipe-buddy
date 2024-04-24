@@ -1,6 +1,6 @@
 {
-  "name": "recipe-buddy-v2",
-  "version": "0.1.0",
+  "name": "recipe-buddy",
+  "version": "2.0.4",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@8.6.1",
