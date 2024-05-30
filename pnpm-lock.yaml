@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -73,7 +73,7 @@ dependencies:
     version: 1.0.0(@types/react-dom@18.2.15)(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
   drizzle-orm:
     specifier: ^0.30.9
-    version: 0.30.9(@planetscale/database@1.11.0)(@types/better-sqlite3@7.6.8)(@types/react@18.2.37)(better-sqlite3@9.2.2)(mysql2@3.9.7)(react@18.2.0)
+    version: 0.30.9(@planetscale/database@1.11.0)(@types/better-sqlite3@7.6.8)(@types/react@18.2.37)(better-sqlite3@9.2.2)(mysql2@3.9.8)(react@18.2.0)
   jsdom:
     specifier: ^23.0.1
     version: 23.0.1
@@ -188,8 +188,8 @@ devDependencies:
     specifier: ^5.7.0
     version: 5.7.0(@types/node@18.17.0)(typescript@5.1.6)
   mysql2:
-    specifier: ^3.9.7
-    version: 3.9.7
+    specifier: ^3.9.8
+    version: 3.9.8
   pino-pretty:
     specifier: ^10.3.1
     version: 10.3.1
@@ -3280,7 +3280,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.30.9(@planetscale/database@1.11.0)(@types/better-sqlite3@7.6.8)(@types/react@18.2.37)(better-sqlite3@9.2.2)(mysql2@3.9.7)(react@18.2.0):
+  /drizzle-orm@0.30.9(@planetscale/database@1.11.0)(@types/better-sqlite3@7.6.8)(@types/react@18.2.37)(better-sqlite3@9.2.2)(mysql2@3.9.8)(react@18.2.0):
     resolution: {integrity: sha512-VOiCFsexErmgqvNCOmbzmqDCZzZsHoz6SkWAjTFxsTr1AllKDbDJ2+GgedLXsXMDgpg/ljDG1zItIFeZtiO2LA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -3364,7 +3364,7 @@ packages:
       '@types/better-sqlite3': 7.6.8
       '@types/react': 18.2.37
       better-sqlite3: 9.2.2
-      mysql2: 3.9.7
+      mysql2: 3.9.8
       react: 18.2.0
     dev: false
 
@@ -5327,8 +5327,8 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /mysql2@3.9.7:
-    resolution: {integrity: sha512-KnJT8vYRcNAZv73uf9zpXqNbvBG7DJrs+1nACsjZP1HMJ1TgXEy8wnNilXAn/5i57JizXKtrUtwDB7HxT9DDpw==}
+  /mysql2@3.9.8:
+    resolution: {integrity: sha512-+5JKNjPuks1FNMoy9TYpl77f+5frbTklz7eb3XDwbpsERRLEeXiW2PDEkakYF50UuKU2qwfGnyXpKYvukv8mGA==}
     engines: {node: '>= 8.0'}
     dependencies:
       denque: 2.1.0
