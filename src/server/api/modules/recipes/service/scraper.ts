@@ -3,7 +3,7 @@ import {
   ExtractNumberSchema,
   JsonLdRecipeSchema,
   RecipeImageUrlSchema,
-  RecipeStepSchema,
+  StepsSchema,
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
 import { JSDOM } from "jsdom"
@@ -90,19 +90,19 @@ export async function hydrateRecipe(url: string) {
 
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
-  const steps = RecipeStepSchema.array().safeParse(
-    recipeData.recipeInstructions
-  )
+  let steps: string = ""
+  try {
+      steps = StepsSchema(recipeData.recipeInstructions)
+    }
+  catch(e){
+      throw new Error("Could not parse steps")
+  }
 
   const ingredients: string[] = recipeData.recipeIngredient
     .flat()
     .map((ingredient: string) => ingredient.trim())
 
   const image = RecipeImageUrlSchema.safeParse(recipeData.image)
-
-  if (!steps.success) {
-    throw new Error("Could not parse steps")
-  }
 
   const ings: Pick<InsertIngredient, "scrapedName">[] = ingredients.map(
     (a) => ({ scrapedName: a })
@@ -113,7 +113,7 @@ export async function hydrateRecipe(url: string) {
   const recipe: InsertRecipe = {
     name: recipeData.name,
     url,
-    steps: steps.data.join("\n"),
+    steps: steps,
     imageUrl: image.success ? image.data : undefined,
     servings: servings.success ? servings.data : undefined,
   }
