@@ -18,7 +18,9 @@ export const RecipeImageUrlSchema = z
   })
 
 export const JsonLdRecipeSchema = z.object({
-  "@type": z.union([z.string(), z.tuple([z.string()]).transform((a) => a[0])]),
+  "@type": z.union([z.string(), z.string().array().nonempty()]).transform((o) => {
+    return Array.isArray(o) ? o : [o];
+  }),
 })
 
 export const ExtractNumberSchema = z.coerce.string().transform((val, ctx) => {
