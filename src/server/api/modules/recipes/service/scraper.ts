@@ -17,6 +17,7 @@ async function getNodeListOfMetadataNodesFromUrl(url: string) {
   )
 
   if (nodeList.length === 0) {
+    logger.error("No metadata found");
     throw new TRPCError({
       message: "The linked page contains no metadata",
       code: "INTERNAL_SERVER_ERROR",
@@ -43,6 +44,20 @@ function jsonObjectHasGraph(jsonObject: Record<string, unknown>): boolean {
   return Object.prototype.hasOwnProperty.call(jsonObject, "@graph")
 }
 
+function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
+  const parsed = JsonLdRecipeSchema.safeParse(jsonObject)
+
+  if (parsed.success) {
+    logger.debug(JSON.stringify(parsed.data["@type"]));
+    if (parsed.data["@type"].some(i => i.toLowerCase().includes("howtostep"))) return true
+  } else {
+    logger.error("Unable to safe parse Recipe Schema");
+  }
+  logger.debug("not a step");
+
+  return false
+}
+
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
     const { textContent } = node
@@ -66,7 +81,6 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
     }
 
     if (Array.isArray(parsedNodeContent)) {
-      console.log("its an array")
       for (const metadataObject of parsedNodeContent) {
         if (jsonObjectIsRecipe(metadataObject)) {
           return metadataObject
@@ -84,6 +98,7 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
         }
       }
     }
+    logger.error(`Unable to extract recipe metadata: ${JSON.stringify(parsedNodeContent)}`);
   }
   throw new Error("Unable to extract Recipe metadata from provided url")
 }
@@ -93,9 +108,19 @@ export async function hydrateRecipe(url: string) {
 
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
-  const steps = RecipeStepSchema.array().safeParse(
-    recipeData.recipeInstructions
-  )
+  const steps = [];
+  for(const step of recipeData.recipeInstructions) {
+    if (jsonObjectIsStep(step)) {
+      const temp = RecipeStepSchema.safeParse(step)
+      if (temp.success) {
+        steps.push(temp.data);
+      }
+    }
+  }
+
+  if (steps.length === 0) {
+    throw new Error("Could not parse steps");
+  }
 
   const ingredients: string[] = recipeData.recipeIngredient
     .flat()
@@ -103,20 +128,21 @@ export async function hydrateRecipe(url: string) {
 
   const image = RecipeImageUrlSchema.safeParse(recipeData.image)
 
-  if (!steps.success) {
-    throw new Error("Could not parse steps")
-  }
-
   const ings: Pick<InsertIngredient, "scrapedName">[] = ingredients.map(
     (a) => ({ scrapedName: a })
   )
 
   const servings = ExtractNumberSchema.safeParse(recipeData.recipeYield)
+  let stepsString = "<ol>";
+  steps.forEach((step) => {
+    stepsString += `<li>${step}<\/li>`;
+  })
+  stepsString += "<\/ol>";
 
   const recipe: InsertRecipe = {
     name: recipeData.name,
     url,
-    steps: steps.data.join("\n"),
+    steps: stepsString,
     imageUrl: image.success ? image.data : undefined,
     servings: servings.success ? servings.data : undefined,
   }
