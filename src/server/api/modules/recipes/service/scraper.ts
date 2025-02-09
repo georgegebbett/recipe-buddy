@@ -30,8 +30,11 @@ function jsonObjectIsRecipe(jsonObject: Record<string, unknown>): boolean {
   const parsed = JsonLdRecipeSchema.safeParse(jsonObject)
 
   if (parsed.success) {
-    if (parsed.data["@type"].toLowerCase().includes("recipe")) return true
+    if (parsed.data["@type"].some(i => i.toLowerCase().includes("recipe"))) return true
+  } else {
+    logger.error("Unable to safe parse Recipe Schema");
   }
+  logger.debug("not a recipe");
 
   return false
 }
