@@ -17,6 +17,7 @@ async function getNodeListOfMetadataNodesFromUrl(url: string) {
   )
 
   if (nodeList.length === 0) {
+    logger.error("No metadata found");
     throw new TRPCError({
       message: "The linked page contains no metadata",
       code: "INTERNAL_SERVER_ERROR",
@@ -55,6 +56,20 @@ function escapeRealLineBreaksInString(input: string): string {
     const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r")
     return quote + escapedContent + quote
   })
+
+  function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
+  const parsed = JsonLdRecipeSchema.safeParse(jsonObject)
+
+  if (parsed.success) {
+    logger.debug(JSON.stringify(parsed.data["@type"]));
+    if (parsed.data["@type"].some(i => i.toLowerCase().includes("howtostep"))) return true
+  } else {
+    logger.error("Unable to safe parse Recipe Schema");
+  }
+  logger.debug("not a step");
+
+  return false
+>>>>>>> 22205fe (Change up the step parsing and make it an ordered list)
 }
 
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
@@ -104,6 +119,7 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
         }
       }
     }
+    logger.error(`Unable to extract recipe metadata: ${JSON.stringify(parsedNodeContent)}`);
   }
   throw new Error("Unable to extract Recipe metadata from provided url")
 }
@@ -113,9 +129,19 @@ export async function hydrateRecipe(url: string) {
 
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
-  const { error, data: steps } = StepsToStringSchema.safeParse(
-    recipeData.recipeInstructions
-  )
+  const steps = [];
+  for(const step of recipeData.recipeInstructions) {
+    if (jsonObjectIsStep(step)) {
+      const temp = RecipeStepSchema.safeParse(step)
+      if (temp.success) {
+        steps.push(temp.data);
+      }
+    }
+  }
+
+  if (steps.length === 0) {
+    throw new Error("Could not parse steps");
+  }
 
   if (error) {
     throw new Error("Unable to parse steps")
@@ -132,11 +158,16 @@ export async function hydrateRecipe(url: string) {
   )
 
   const servings = ExtractNumberSchema.safeParse(recipeData.recipeYield)
+  let stepsString = "<ol>";
+  steps.forEach((step) => {
+    stepsString += `<li>${step}<\/li>`;
+  })
+  stepsString += "<\/ol>";
 
   const recipe: InsertRecipe = {
     name: recipeData.name,
     url,
-    steps,
+    steps: stepsString,
     imageUrl: image.success ? image.data : undefined,
     servings: servings.success ? servings.data : undefined,
   }
