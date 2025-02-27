@@ -40,14 +40,30 @@ function jsonObjectHasGraph(jsonObject: Record<string, unknown>): boolean {
   return Object.prototype.hasOwnProperty.call(jsonObject, "@graph")
 }
 
+function normalizeWhitespace(input: string): string {
+  return input.replace(/[\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ');
+}
+
+function escapeRealLineBreaksInString(input: string): string {
+  return input.replace(/(["'])([\s\S]*?)\1/g, (match, quote, content) => {
+    const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+    return quote + escapedContent + quote;
+  });
+}
+
+
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
-    const { textContent } = node
+    let { textContent } = node
 
     if (!textContent) {
       logger.debug("No text content in node, trying next node")
       continue
     }
+
+    // Preprocess the text to ensure that it can be parsed as JSON
+    textContent = escapeRealLineBreaksInString(textContent);
+    textContent = normalizeWhitespace(textContent);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let parsedNodeContent: any
