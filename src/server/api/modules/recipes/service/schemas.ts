@@ -1,10 +1,15 @@
 import z from "zod"
 
 export const RecipeStepSchema = z
-  .union([z.string(), z.object({ text: z.string() })])
+  .union([
+    z.string(),
+    z.object({ "@type": z.string(), text: z.string() }),
+    z.object({ "@type": z.string(), text: z.string() }).array().nonempty()
+  ])
   .transform((input): string => {
     if (typeof input === "string") return input
-    return input.text
+    const res = Array.isArray(input) ? input.map(s => s.text).join('\n\n') : input.text
+    return res;
   })
 
 const baseUrlSchema = z.union([z.string(), z.object({ url: z.string() })])

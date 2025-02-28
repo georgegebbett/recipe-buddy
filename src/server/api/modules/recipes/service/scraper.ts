@@ -10,6 +10,17 @@ import { JSDOM } from "jsdom"
 
 import { logger } from "~/lib/logger"
 
+function normalizeWhitespace(input: string): string {
+  return input.replace(/[\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ');
+}
+
+function escapeRealLineBreaksInString(input: string): string {
+  return input.replace(/(["'])([\s\S]*?)\1/g, (match, quote, content) => {
+    const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+    return quote + escapedContent + quote;
+  });
+}
+
 async function getNodeListOfMetadataNodesFromUrl(url: string) {
   const dom = await JSDOM.fromURL(url)
   const nodeList: NodeList = dom.window.document.querySelectorAll(
@@ -35,7 +46,6 @@ function jsonObjectIsRecipe(jsonObject: Record<string, unknown>): boolean {
   } else {
     logger.error("Unable to safe parse Recipe Schema");
   }
-  logger.debug("not a recipe");
 
   return false
 }
@@ -53,19 +63,20 @@ function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
   } else {
     logger.error("Unable to safe parse Recipe Schema");
   }
-  logger.debug("not a step");
-
   return false
 }
 
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
-    const { textContent } = node
+    let { textContent } = node
 
     if (!textContent) {
       logger.debug("No text content in node, trying next node")
       continue
     }
+
+    textContent = escapeRealLineBreaksInString(textContent);
+    textContent = normalizeWhitespace(textContent);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let parsedNodeContent: any
@@ -114,11 +125,14 @@ export async function hydrateRecipe(url: string) {
       const temp = RecipeStepSchema.safeParse(step)
       if (temp.success) {
         steps.push(temp.data);
+      } else {
+        logger.error(JSON.stringify(temp.error));
       }
     }
   }
 
   if (steps.length === 0) {
+    logger.error("Unable to parse steps")
     throw new Error("Could not parse steps");
   }
 
