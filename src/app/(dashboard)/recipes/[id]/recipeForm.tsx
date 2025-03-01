@@ -23,6 +23,10 @@ import {
 import { Input } from "~/components/ui/input"
 import { IngredientTable } from "~/components/ingredient-table"
 import { RecipeTitleInput } from "~/components/recipe-title-input"
+import * as Tabs from "@radix-ui/react-tabs"
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css'
+import '../../../../styles/quill-custom.css'
 
 type RecipeFormProps = {
   recipeId: number
@@ -105,18 +109,35 @@ function RecipeFormInner({
           />
           <Link
             href={recipe.url}
-            className="text-muted-foreground pl-1 text-lg"
+            className="pl-1 text-lg text-muted-foreground"
             target="_blank"
           >
             View Original
           </Link>
         </div>
+          <Tabs.Root defaultValue="ingredients">
+            <Tabs.List className="border-b-orange flex-row">
+              <Tabs.Trigger className="m-r-1 rounded-t-md border-x border-t bg-muted/50 p-4 radix-state-active:bg-transparent" value="ingredients">Ingredients</Tabs.Trigger>
+              <Tabs.Trigger className="m-1 rounded-t-md border-x border-t bg-muted/50 p-4 radix-state-active:bg-transparent" value="steps">Steps</Tabs.Trigger>
+            </Tabs.List>
         <div className="flex flex-col gap-2">
-          <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} />
+          <Tabs.Content value="ingredients">
+            <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} />
+          </Tabs.Content>
+          <Tabs.Content value="steps">
+            <Controller
+              render={({ field }) => (
+                <ReactQuill value={field.value} onChange={field.onChange}/>
+              )}
+              name="method"
+              control={form.control}
+            />
+          </Tabs.Content>
           <Button type="submit" isLoading={mutLoading} className="self-end">
             Create Recipe
           </Button>
         </div>
+          </Tabs.Root>
       </form>
     </FormProvider>
   )

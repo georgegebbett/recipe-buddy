@@ -1,0 +1,13 @@
+.ql-toolbar.ql-snow, .ql-container.ql-snow {
+    border: 1px solid hsl(var(--border)) !important;
+}
+.TabsTrigger[data-state="active"] {
+	color: var(--violet-11);
+	box-shadow:
+		inset 0 -1px 0 0 currentColor,
+		0 1px 0 0 currentColor;
+}
+.TabsTrigger:focus {
+	position: relative;
+	box-shadow: 0 0 0 2px black;
+}
