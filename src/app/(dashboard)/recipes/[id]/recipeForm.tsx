@@ -116,9 +116,9 @@ function RecipeFormInner({
           </Link>
         </div>
           <Tabs.Root defaultValue="ingredients">
-            <Tabs.List className="border-b-orange flex-row">
-              <Tabs.Trigger className="m-r-1 rounded-t-md border-x border-t bg-muted/50 p-4 radix-state-active:bg-transparent" value="ingredients">Ingredients</Tabs.Trigger>
-              <Tabs.Trigger className="m-1 rounded-t-md border-x border-t bg-muted/50 p-4 radix-state-active:bg-transparent" value="steps">Steps</Tabs.Trigger>
+            <Tabs.List className="flex-row border-b">
+              <Tabs.Trigger className="m-r-1 p-4 radix-state-active:rounded-t-md radix-state-active:border-x radix-state-active:border-t" value="ingredients">Ingredients</Tabs.Trigger>
+              <Tabs.Trigger className="m-1 p-4 radix-state-active:rounded-t-md radix-state-active:border-x radix-state-active:border-t" value="steps">Steps</Tabs.Trigger>
             </Tabs.List>
         <div className="flex flex-col gap-2">
           <Tabs.Content value="ingredients">
