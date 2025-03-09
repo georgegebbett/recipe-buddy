@@ -120,13 +120,15 @@ export async function hydrateRecipe(url: string) {
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
   const steps = [];
-  for(const step of recipeData.recipeInstructions) {
-    if (jsonObjectIsStep(step)) {
-      const temp = RecipeStepSchema.safeParse(step)
-      if (temp.success) {
-        steps.push(temp.data);
-      } else {
-        logger.error(JSON.stringify(temp.error));
+  if (typeof recipeData.recipeInstructions === "string") {
+    steps.push(...(recipeData.recipeInstructions.split(/\n\n+/)));
+  } else {
+    for(const step of recipeData.recipeInstructions) {
+      if (jsonObjectIsStep(step)) {
+        const temp = RecipeStepSchema.safeParse(step)
+        if (temp.success) {
+          steps.push(temp.data);
+        }
       }
     }
   }
