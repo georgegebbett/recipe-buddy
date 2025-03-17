@@ -60,7 +60,7 @@ export function IngredientGroupCombobox({
           <div className="overflow-x-clip text-ellipsis">
             {value ?? "Select group..."}
           </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
@@ -79,7 +79,7 @@ export function IngredientGroupCombobox({
                 disabled={textVal.length === 0 || groups.includes(textVal)}
               >
                 <div className="flex items-center gap-2">
-                  <PlusCircleIcon className="h-4 w-4 fill-black text-white" />
+                  <PlusCircleIcon className="size-4 fill-black text-white" />
                   <p>Add {textVal}</p>
                 </div>
               </CommandItem>

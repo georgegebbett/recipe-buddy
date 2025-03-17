@@ -105,7 +105,7 @@ function RecipeFormInner({
           />
           <Link
             href={recipe.url}
-            className="text-muted-foreground pl-1 text-lg"
+            className="pl-1 text-lg text-muted-foreground"
             target="_blank"
           >
             View Original
