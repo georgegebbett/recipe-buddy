@@ -44,7 +44,7 @@ export function GrocyUnitCombobox({
             {value
               ? data.find((product) => product.id === value)?.name
               : "Select unit..."}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">

@@ -37,14 +37,14 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "bg-background min-h-screen font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           inter.variable
         )}
       >
         <TRPCReactProvider cookies={cookies().toString()}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex min-h-screen flex-col space-y-6">
-              <header className="bg-background sticky top-0 z-40 border-b">
+              <header className="sticky top-0 z-40 border-b bg-background">
                 <div className="container flex h-16 items-center justify-between py-4">
                   <MainNav items={user ? dashboardConfig.mainNav : []} />
                   {user && (

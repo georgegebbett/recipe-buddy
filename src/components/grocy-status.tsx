@@ -13,7 +13,7 @@ export const GrocyStatus = () => {
     <>
       {data && data.success ? (
         <Alert>
-          <CheckCircle className="h-4 w-4" />
+          <CheckCircle className="size-4" />
           <AlertTitle>Connected to Grocy</AlertTitle>
           <AlertDescription>
             Connected to Grocy v{data.data.grocy_version.Version}
@@ -30,7 +30,7 @@ export const GrocyStatus = () => {
         </Alert>
       ) : (
         <Alert>
-          <CheckCircle className="h-4 w-4" />
+          <CheckCircle className="size-4" />
           <AlertTitle>Not connected to Grocy</AlertTitle>
           <AlertDescription>
             Unable to connect to Grocy - check your URL and API key
