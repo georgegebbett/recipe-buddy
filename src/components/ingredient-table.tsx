@@ -186,7 +186,7 @@ const IngredientTableRow = ({
                   data-has-note={field.value && field.value.trim().length > 0}
                   className="data-[has-note=true]:bg-green-200"
                 >
-                  <SquarePen strokeWidth={1} className={"h-4 w-4"} />
+                  <SquarePen strokeWidth={1} className={"size-4"} />
                 </Button>
               </IngredientNoteDialog>
             )

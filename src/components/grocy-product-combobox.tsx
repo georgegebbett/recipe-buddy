@@ -89,7 +89,7 @@ export function GrocyProductCombobox({
                 ? data.find((product) => product.id === value)?.name
                 : "Select product..."}
             </div>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
@@ -100,7 +100,7 @@ export function GrocyProductCombobox({
               <CommandGroup>
                 <CommandItem value="add" onSelect={onCreateNewProduct}>
                   <div className="flex items-center gap-2">
-                    <PlusCircleIcon className="h-4 w-4 fill-black text-white" />
+                    <PlusCircleIcon className="size-4 fill-black text-white" />
                     <p>Add Product</p>
                   </div>
                 </CommandItem>
