@@ -90,5 +90,13 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.25.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "bcrypt",
+      "better-sqlite3",
+      "es5-ext",
+      "esbuild"
+    ]
   }
 }
