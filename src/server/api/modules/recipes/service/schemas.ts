@@ -1,10 +1,27 @@
 import z from "zod"
 
-export const RecipeStepSchema = z
-  .union([z.string(), z.object({ text: z.string() })])
-  .transform((input): string => {
-    if (typeof input === "string") return input
-    return input.text
+const StepSchema = z.object({
+  "@context": z.string(),
+  "@type": z.string(),
+  text: z.string(),
+})
+
+const beautifyInstructions = (input: string): string => {
+  const sections = input.split(/\n\n+/)
+
+  const formattedSections = sections.map((section, index) => {
+    const numberedSection = section.replace(/\n/g, "<br>")
+    return `${index + 1}. ${numberedSection}`
+  })
+
+  return formattedSections.map((section) => `<p>${section}</p>`).join("")
+}
+
+export const StepsToStringSchema = z
+  .union([z.array(StepSchema), z.string()])
+  .transform((steps) => {
+    if (typeof steps === "string") return beautifyInstructions(steps)
+    return beautifyInstructions(steps.map((step) => step.text).join("\n\n"))
   })
 
 const baseUrlSchema = z.union([z.string(), z.object({ url: z.string() })])
