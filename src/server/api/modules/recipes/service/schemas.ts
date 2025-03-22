@@ -1,26 +1,28 @@
 import z from "zod"
 
-type Step = {
-  "@context": string;
-  "@type": string;
-  text: string;
-};
+const StepSchema = z.object({
+  "@context": z.string(),
+  "@type": z.string(),
+  text: z.string(),
+})
 
-function beautifyInstructions(input: string): string {
-  const sections = input.split(/\n\n+/);
-  
+const beautifyInstructions = (input: string): string => {
+  const sections = input.split(/\n\n+/)
+
   const formattedSections = sections.map((section, index) => {
-      const numberedSection = section.replace(/\n/g, '<br>');
-      return `${index + 1}. ${numberedSection}`;
-  });
+    const numberedSection = section.replace(/\n/g, "<br>")
+    return `${index + 1}. ${numberedSection}`
+  })
 
-  return formattedSections.map(section => `<p>${section}</p>`).join('');
+  return formattedSections.map((section) => `<p>${section}</p>`).join("")
 }
 
-export function StepsSchema(steps: string | Step[]){
-  if (typeof steps === "string") return beautifyInstructions(steps);
-  return beautifyInstructions(steps.map(step => step.text).join('\n\n')); 
-}
+export const StepsToStringSchema = z
+  .union([z.array(StepSchema), z.string()])
+  .transform((steps) => {
+    if (typeof steps === "string") return beautifyInstructions(steps)
+    return beautifyInstructions(steps.map((step) => step.text).join("\n\n"))
+  })
 
 const baseUrlSchema = z.union([z.string(), z.object({ url: z.string() })])
 export const RecipeImageUrlSchema = z

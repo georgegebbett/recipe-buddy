@@ -3,7 +3,7 @@ import {
   ExtractNumberSchema,
   JsonLdRecipeSchema,
   RecipeImageUrlSchema,
-  StepsSchema,
+  StepsToStringSchema,
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
 import { JSDOM } from "jsdom"
@@ -41,20 +41,22 @@ function jsonObjectHasGraph(jsonObject: Record<string, unknown>): boolean {
 }
 
 function normalizeWhitespace(input: string): string {
-  return input.replace(/[\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ');
+  return input.replace(
+    /[\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g,
+    " "
+  )
 }
 
 function escapeRealLineBreaksInString(input: string): string {
   return input.replace(/(["'])([\s\S]*?)\1/g, (match, quote, content) => {
-    const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
-    return quote + escapedContent + quote;
-  });
+    const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r")
+    return quote + escapedContent + quote
+  })
 }
-
 
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
-    let { textContent } = node
+    const { textContent } = node
 
     if (!textContent) {
       logger.debug("No text content in node, trying next node")
@@ -62,14 +64,17 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
     }
 
     // Preprocess the text to ensure that it can be parsed as JSON
-    textContent = escapeRealLineBreaksInString(textContent);
-    textContent = normalizeWhitespace(textContent);
+    const textContentWithEscapedLinebreaks =
+      escapeRealLineBreaksInString(textContent)
+    const formattedTextContent = normalizeWhitespace(
+      textContentWithEscapedLinebreaks
+    )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let parsedNodeContent: any
 
     try {
-      parsedNodeContent = JSON.parse(textContent)
+      parsedNodeContent = JSON.parse(formattedTextContent)
     } catch (e) {
       logger.error(
         { error: e, textContent },
@@ -79,7 +84,6 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
     }
 
     if (Array.isArray(parsedNodeContent)) {
-      console.log("its an array")
       for (const metadataObject of parsedNodeContent) {
         if (jsonObjectIsRecipe(metadataObject)) {
           return metadataObject
@@ -106,12 +110,12 @@ export async function hydrateRecipe(url: string) {
 
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
-  let steps: string = ""
-  try {
-      steps = StepsSchema(recipeData.recipeInstructions)
-    }
-  catch(e){
-      throw new Error("Could not parse steps")
+  const { error, data: steps } = StepsToStringSchema.safeParse(
+    recipeData.recipeInstructions
+  )
+
+  if (error) {
+    throw new Error("Unable to parse steps")
   }
 
   const ingredients: string[] = recipeData.recipeIngredient
@@ -129,7 +133,7 @@ export async function hydrateRecipe(url: string) {
   const recipe: InsertRecipe = {
     name: recipeData.name,
     url,
-    steps: steps,
+    steps,
     imageUrl: image.success ? image.data : undefined,
     servings: servings.success ? servings.data : undefined,
   }
