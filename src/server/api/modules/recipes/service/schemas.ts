@@ -1,8 +1,6 @@
 import z from "zod"
 
 const StepSchema = z.object({
-  "@context": z.string(),
-  "@type": z.string(),
   text: z.string(),
 })
 
