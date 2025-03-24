@@ -3,21 +3,20 @@
   "version": "2.0.8",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.6.3+sha512.bb45e34d50a9a76e858a95837301bfb6bd6d35aea2c5d52094fa497a467c43f5c440103ce2511e9e0a2f89c3d6071baac3358fc68ac6fb75e2ceb3d2736065e6",
   "scripts": {
     "build": "next build",
     "check": "tsc --noEmit",
-    "db:push": "dotenv drizzle-kit push:sqlite",
-    "db:migrate:dev": "dotenv tsx src/server/db/migrate.ts",
     "db:migrate": "node migrations/drizzle-migrate.mjs",
+    "db:migrate:dev": "dotenv tsx src/server/db/migrate.ts",
+    "db:push": "dotenv drizzle-kit push:sqlite",
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev | pino-pretty",
-    "lint": "SKIP_ENV_VALIDATION=1 next lint",
-    "lint:fix": "next lint --fix",
-    "start": "next start",
     "format": "SKIP_ENV_VALIDATION=1 prettier -c src --ignore-path .gitignore",
     "format:fix": "prettier -l -w src --ignore-path .gitignore",
-    "knip": "SKIP_ENV_VALIDATION=1 knip"
+    "knip": "SKIP_ENV_VALIDATION=1 knip",
+    "lint": "SKIP_ENV_VALIDATION=1 next lint",
+    "lint:fix": "next lint --fix",
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.3",
@@ -35,8 +34,6 @@
     "@trpc/client": "^10.43.6",
     "@trpc/react-query": "^10.43.6",
     "@trpc/server": "^10.43.6",
-    "@types/better-sqlite3": "^7.6.8",
-    "@types/jsdom": "^21.1.6",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^9.2.2",
     "class-variance-authority": "^0.7.0",
@@ -67,6 +64,8 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^18.17.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -82,15 +81,12 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-tailwindcss": "^3.11.0",
     "knip": "^5.46.0",
-    "mysql2": "^3.9.7",
     "pino-pretty": "^10.3.1",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "tailwindcss": "^3.3.5"
   },
-  "ct3aMetadata": {
-    "initVersion": "7.25.0"
-  },
+  "packageManager": "pnpm@10.6.3+sha512.bb45e34d50a9a76e858a95837301bfb6bd6d35aea2c5d52094fa497a467c43f5c440103ce2511e9e0a2f89c3d6071baac3358fc68ac6fb75e2ceb3d2736065e6",
   "pnpm": {
     "onlyBuiltDependencies": [
       "bcrypt",
@@ -98,5 +94,8 @@
       "es5-ext",
       "esbuild"
     ]
+  },
+  "ct3aMetadata": {
+    "initVersion": "7.25.0"
   }
 }
