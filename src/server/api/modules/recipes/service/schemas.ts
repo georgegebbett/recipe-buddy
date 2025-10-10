@@ -23,7 +23,7 @@ export const RecipeImageUrlSchema = z
   })
 
 export const JsonLdRecipeSchema = z.object({
-  "@type": z.union([z.string(), z.string().array().nonempty()]).transform((o) => {
+  "@type": z.union([z.string(), z.string().array()]).transform((o) => {
     return Array.isArray(o) ? o : [o];
   }),
 })
