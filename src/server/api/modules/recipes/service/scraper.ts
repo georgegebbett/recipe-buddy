@@ -10,17 +10,6 @@ import { JSDOM } from "jsdom"
 
 import { logger } from "~/lib/logger"
 
-function normalizeWhitespace(input: string): string {
-  return input.replace(/[\u00A0\u1680\u180E\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/g, ' ');
-}
-
-function escapeRealLineBreaksInString(input: string): string {
-  return input.replace(/(["'])([\s\S]*?)\1/g, (match, quote, content) => {
-    const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
-    return quote + escapedContent + quote;
-  });
-}
-
 async function getNodeListOfMetadataNodesFromUrl(url: string) {
   const dom = await JSDOM.fromURL(url)
   const nodeList: NodeList = dom.window.document.querySelectorAll(
