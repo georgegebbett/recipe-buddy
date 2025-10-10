@@ -115,7 +115,7 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
         }
       }
     }
-    logger.error(`Unable to extract recipe metadata: ${JSON.stringify(parsedNodeContent)}`);
+    logger.error({parsedNodeContent}, `Unable to extract recipe metadata`);
   }
   throw new Error("Unable to extract Recipe metadata from provided url")
 }
