@@ -4,7 +4,7 @@ export const RecipeStepSchema = z
   .union([
     z.string(),
     z.object({ "@type": z.string(), text: z.string() }),
-    z.object({ "@type": z.string(), text: z.string() }).array().nonempty()
+    z.object({ "@type": z.string(), text: z.string() }).array()
   ])
   .transform((input): string => {
     if (typeof input === "string") return input
