@@ -3,7 +3,7 @@ import {
   ExtractNumberSchema,
   JsonLdRecipeSchema,
   RecipeImageUrlSchema,
-  StepsToStringSchema,
+  RecipeStepSchema
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
 import { JSDOM } from "jsdom"
@@ -55,8 +55,9 @@ function escapeRealLineBreaksInString(input: string): string {
     const escapedContent = content.replace(/\n/g, "\\n").replace(/\r/g, "\\r")
     return quote + escapedContent + quote
   })
+}
 
-  function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
+function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
   const parsed = JsonLdRecipeSchema.safeParse(jsonObject)
 
   if (parsed.success) {
@@ -70,7 +71,7 @@ function escapeRealLineBreaksInString(input: string): string {
 
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
-    let { textContent } = node
+    const { textContent } = node
 
     if (!textContent) {
       logger.debug("No text content in node, trying next node")
@@ -142,10 +143,6 @@ export async function hydrateRecipe(url: string) {
   if (steps.length === 0) {
     logger.error("Unable to parse steps")
     throw new Error("Could not parse steps");
-  }
-
-  if (error) {
-    throw new Error("Unable to parse steps")
   }
 
   const ingredients: string[] = recipeData.recipeIngredient

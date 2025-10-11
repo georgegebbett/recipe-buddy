@@ -20,10 +20,15 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form"
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabContent
+} from "~/components/ui/tabs"
 import { Input } from "~/components/ui/input"
 import { IngredientTable } from "~/components/ingredient-table"
 import { RecipeTitleInput } from "~/components/recipe-title-input"
-import * as Tabs from "@radix-ui/react-tabs"
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import '../../../../styles/quill-custom.css'
@@ -115,29 +120,35 @@ function RecipeFormInner({
             View Original
           </Link>
         </div>
-          <Tabs.Root defaultValue="ingredients">
-            <Tabs.List className="flex-row border-b">
-              <Tabs.Trigger className="m-r-1 p-4 radix-state-active:rounded-t-md radix-state-active:border-x radix-state-active:border-t" value="ingredients">Ingredients</Tabs.Trigger>
-              <Tabs.Trigger className="m-1 p-4 radix-state-active:rounded-t-md radix-state-active:border-x radix-state-active:border-t" value="steps">Steps</Tabs.Trigger>
-            </Tabs.List>
-        <div className="flex flex-col gap-2">
-          <Tabs.Content value="ingredients">
-            <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} />
-          </Tabs.Content>
-          <Tabs.Content value="steps">
-            <Controller
-              render={({ field }) => (
-                <ReactQuill value={field.value} onChange={field.onChange}/>
-              )}
-              name="method"
-              control={form.control}
-            />
-          </Tabs.Content>
-          <Button type="submit" isLoading={mutLoading} className="self-end">
-            Create Recipe
-          </Button>
-        </div>
-          </Tabs.Root>
+          <Tabs defaultValue="ingredients">
+            <TabsList className="flex-row border-b">
+              <TabsTrigger className="m-r-1" value="ingredients">Ingredients</TabsTrigger>
+              <TabsTrigger className="m-1" value="steps">Steps</TabsTrigger>
+            </TabsList>
+            <div className="flex flex-col gap-2">
+          <TabContent value="ingredients">
+                <Controller
+                  render={({field}) => (
+                      <IngredientTable grocyBaseUrl={grocyBaseUrl ?? ""} {...field}/>
+                  )}
+                  name="ingredients"
+                  control={form.control}
+                />
+          </TabContent>
+          <TabContent value="steps">
+                <Controller
+                  render={({ field }) => (
+                    <ReactQuill value={field.value} onChange={field.onChange}/>
+                  )}
+                  name="method"
+                  control={form.control}
+                />
+          </TabContent>
+              <Button type="submit" isLoading={mutLoading} className="self-end">
+                Create Recipe
+              </Button>
+            </div>
+          </Tabs>
       </form>
     </FormProvider>
   )
