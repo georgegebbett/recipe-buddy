@@ -6,13 +6,25 @@ import {
   StepsToStringSchema,
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
-import { JSDOM } from "jsdom"
+import * as cheerio from "cheerio"
 
 import { logger } from "~/lib/logger"
 
 async function getNodeListOfMetadataNodesFromUrl(url: string) {
-  const dom = await JSDOM.fromURL(url)
-  const nodeList: NodeList = dom.window.document.querySelectorAll(
+  let dom: cheerio.CheerioAPI 
+  try {
+    dom = await cheerio.fromURL(url)
+  } catch (e) {
+    let message  = `Can't load from url ${url}`
+    if (typeof e === "object" && e !== null && "statusCode" in e) {
+        message = `${message}: statuscode ${e.statusCode}`
+    }
+    throw new TRPCError({
+      message: `${message}: ${e}`,
+      code: "INTERNAL_SERVER_ERROR",
+    })
+  }
+  const nodeList = dom(
     "script[type='application/ld+json']"
   )
 
@@ -54,49 +66,54 @@ function escapeRealLineBreaksInString(input: string): string {
   })
 }
 
-function getSchemaRecipeFromNodeList(nodeList: NodeList) {
-  for (const node of nodeList.values()) {
-    const { textContent } = node
-
-    if (!textContent) {
-      logger.debug("No text content in node, trying next node")
-      continue
-    }
-
-    // Preprocess the text to ensure that it can be parsed as JSON
-    const textContentWithEscapedLinebreaks =
-      escapeRealLineBreaksInString(textContent)
-    const formattedTextContent = normalizeWhitespace(
-      textContentWithEscapedLinebreaks
-    )
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let parsedNodeContent: any
-
-    try {
-      parsedNodeContent = JSON.parse(formattedTextContent)
-    } catch (e) {
-      logger.error(
-        { error: e, textContent },
-        "Error in extracting JSON from node content"
+function getSchemaRecipeFromNodeList(nodeList: cheerio.Cheerio<domhandler.Element>) {
+  for (const nodeParent of nodeList) {
+    for (const node of nodeParent.children) {
+      if (!(node instanceof domhandler.Text)) {
+        continue
+      }
+      const textContent = node.data
+  
+      if (!textContent) {
+        logger.debug("No text content in node, trying next node")
+        continue
+      }
+  
+      // Preprocess the text to ensure that it can be parsed as JSON
+      const textContentWithEscapedLinebreaks =
+        escapeRealLineBreaksInString(textContent)
+      const formattedTextContent = normalizeWhitespace(
+        textContentWithEscapedLinebreaks
       )
-      continue
-    }
-
-    if (Array.isArray(parsedNodeContent)) {
-      for (const metadataObject of parsedNodeContent) {
-        if (jsonObjectIsRecipe(metadataObject)) {
-          return metadataObject
+  
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let parsedNodeContent: any
+  
+      try {
+        parsedNodeContent = JSON.parse(formattedTextContent)
+      } catch (e) {
+        logger.error(
+          { error: e, textContent },
+          "Error in extracting JSON from node content"
+        )
+        continue
+      }
+  
+      if (Array.isArray(parsedNodeContent)) {
+        for (const metadataObject of parsedNodeContent) {
+          if (jsonObjectIsRecipe(metadataObject)) {
+            return metadataObject
+          }
         }
-      }
-    } else {
-      if (jsonObjectIsRecipe(parsedNodeContent)) {
-        return parsedNodeContent
-      }
-      if (jsonObjectHasGraph(parsedNodeContent)) {
-        for (const graphNode of parsedNodeContent["@graph"]) {
-          if (jsonObjectIsRecipe(graphNode)) {
-            return graphNode
+      } else {
+        if (jsonObjectIsRecipe(parsedNodeContent)) {
+          return parsedNodeContent
+        }
+        if (jsonObjectHasGraph(parsedNodeContent)) {
+          for (const graphNode of parsedNodeContent["@graph"]) {
+            if (jsonObjectIsRecipe(graphNode)) {
+              return graphNode
+            }
           }
         }
       }
@@ -106,7 +123,7 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
 }
 
 export async function hydrateRecipe(url: string) {
-  const nodeList: NodeList = await getNodeListOfMetadataNodesFromUrl(url)
+  const nodeList = await getNodeListOfMetadataNodesFromUrl(url)
 
   const recipeData = getSchemaRecipeFromNodeList(nodeList)
 
@@ -115,7 +132,7 @@ export async function hydrateRecipe(url: string) {
   )
 
   if (error) {
-    throw new Error("Unable to parse steps")
+    throw new Error("Unable to parse steps: ".concat(error.toString()))
   }
 
   const ingredients: string[] = recipeData.recipeIngredient
