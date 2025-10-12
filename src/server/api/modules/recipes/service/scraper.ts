@@ -69,6 +69,18 @@ function jsonObjectIsStep(jsonObject: Record<string, unknown>): boolean {
   return false
 }
 
+function jsonObectIsHowToSection(jsonObject: Record<string, unknown>): boolean {
+  const parsed = JsonLdRecipeSchema.safeParse(jsonObject)
+
+  if (parsed.success) {
+    logger.debug(JSON.stringify(parsed.data["@type"]));
+    if (parsed.data["@type"].some(i => i.toLowerCase().includes("howtosection"))) return true
+  } else {
+    logger.error("Unable to safe parse Recipe Schema");
+  }
+  return false
+}
+
 function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   for (const node of nodeList.values()) {
     const { textContent } = node
@@ -136,6 +148,15 @@ export async function hydrateRecipe(url: string) {
         if (temp.success) {
           steps.push(temp.data);
         }
+      } else if (jsonObectIsHowToSection(step)) {
+        for(const innerStep of step.itemListElement) {
+          const temp2 = RecipeStepSchema.safeParse(innerStep)
+          if (temp2.success) {
+            steps.push(temp2.data);
+          }
+        }
+      } else {
+        logger.error("unknown pattern for step")
       }
     }
   }
