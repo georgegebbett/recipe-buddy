@@ -1,5 +1,9 @@
-import { createEnv } from "@t3-oss/env-nextjs"
-import { z } from "zod"
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+import nextEnv from "@next/env";
+
+const projectDir = process.cwd();
+nextEnv.loadEnvConfig(projectDir);
 
 export const env = createEnv({
   /**
@@ -24,6 +28,7 @@ export const env = createEnv({
     ),
     GROCY_BASE_URL: z.string(),
     GROCY_API_KEY: z.string(),
+    LOG_LEVEL: z.string().optional(),
   },
 
   /**
@@ -46,6 +51,7 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GROCY_BASE_URL: process.env.GROCY_BASE_URL,
     GROCY_API_KEY: process.env.GROCY_API_KEY,
+    LOG_LEVEL: process.env.LOG_LEVEL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -57,4 +63,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-})
+});
