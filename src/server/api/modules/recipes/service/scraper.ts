@@ -7,10 +7,11 @@ import {
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
 import * as cheerio from "cheerio"
+import * as domhandler from "domhandler"
 
 import { logger } from "~/lib/logger"
 
-async function getNodeListOfMetadataNodesFromUrl(url: string) {
+async function getSchemaRecipeFromUrl(url: string) {
   let dom: cheerio.CheerioAPI 
   try {
     dom = await cheerio.fromURL(url)
@@ -29,13 +30,10 @@ async function getNodeListOfMetadataNodesFromUrl(url: string) {
   )
 
   if (nodeList.length === 0) {
-    throw new TRPCError({
-      message: "The linked page contains no metadata",
-      code: "INTERNAL_SERVER_ERROR",
-    })
+    return getSchemaRecipeFromMicrodata(dom)
   }
 
-  return nodeList
+  return getSchemaRecipeFromNodeList(nodeList)
 }
 
 function jsonObjectIsRecipe(jsonObject: Record<string, unknown>): boolean {
@@ -122,10 +120,87 @@ function getSchemaRecipeFromNodeList(nodeList: cheerio.Cheerio<domhandler.Elemen
   throw new Error("Unable to extract Recipe metadata from provided url")
 }
 
-export async function hydrateRecipe(url: string) {
-  const nodeList = await getNodeListOfMetadataNodesFromUrl(url)
 
-  const recipeData = getSchemaRecipeFromNodeList(nodeList)
+function microDataExtractText(element: domhandler.Element): string {
+    const maybeContent = element.attribs["content"]
+    if (maybeContent !== undefined) {
+      return maybeContent
+    }
+    const node = cheerio.load(element)
+    return node.text()
+}
+
+interface SchemaRecipe {
+  name?: string,
+  image?: string,
+  recipeYield?: string,
+  recipeIngredient: string[],
+  recipeInstructions: string | string[],
+}
+
+function getSchemaRecipeFromMicrodata(dom: cheerio.CheerioAPI): SchemaRecipe {
+  const nodeList = dom(
+    "[itemscope]"
+  )
+
+  if (nodeList.length === 0) {
+    throw new TRPCError({
+      message: "The linked page contains no metadata",
+      code: "INTERNAL_SERVER_ERROR",
+    })
+  }
+
+  const res: SchemaRecipe = {
+    name: undefined,
+    image: undefined,
+    recipeYield: undefined,
+    recipeIngredient: [],
+    recipeInstructions: [],
+  }
+  for (const element of nodeList) {
+    const ty = element.attribs["itemtype"]
+    if (ty === undefined || !ty.toLowerCase().includes("recipe")) {
+      continue;
+    }
+    const node = cheerio.load(element)
+
+    const properties = node("[itemprop]")
+    for (const property of properties) {
+      const ty = property.attribs["itemprop"]
+      if (ty == "name") {
+        res.name = microDataExtractText(property)
+      } else if (ty == "image") {
+        res.image = microDataExtractText(property)
+      } else if (ty == "recipeYield") {
+        res.recipeYield = microDataExtractText(property)
+      } else if (ty == "recipeIngredient") {
+        res.recipeIngredient.push(microDataExtractText(property))
+      } else if (ty == "recipeInstructions") {
+        const instructions = cheerio.load(property)
+        const listItems = instructions("li")
+        if (listItems.length > 0) {
+            res.recipeInstructions = []
+            for (const listItem of listItems) {
+                res.recipeInstructions.push(microDataExtractText(listItem))
+            }
+        } else {
+            res.recipeInstructions = microDataExtractText(property)
+        }
+      } else {
+        console.log(`ignoring unknown itemtype '${ty}'`)
+      }
+    }
+  }
+
+  if (Object.keys(res).length === 0) {
+    throw new Error("Unable to extract Recipe metadata from provided url")
+  }
+  return res
+}
+
+
+export async function hydrateRecipe(url: string) {
+  const recipeData = await getSchemaRecipeFromUrl(url)
 
   const { error, data: steps } = StepsToStringSchema.safeParse(
     recipeData.recipeInstructions
