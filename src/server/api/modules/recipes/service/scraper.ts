@@ -6,24 +6,34 @@ import {
   StepsToStringSchema,
 } from "~/server/api/modules/recipes/service/schemas"
 import { InsertIngredient, InsertRecipe } from "~/server/db/schema"
-import { JSDOM } from "jsdom"
+import * as cheerio from "cheerio"
+import * as domhandler from "domhandler"
 
 import { logger } from "~/lib/logger"
 
-async function getNodeListOfMetadataNodesFromUrl(url: string) {
-  const dom = await JSDOM.fromURL(url)
-  const nodeList: NodeList = dom.window.document.querySelectorAll(
+async function getSchemaRecipeFromUrl(url: string) {
+  let dom: cheerio.CheerioAPI 
+  try {
+    dom = await cheerio.fromURL(url)
+  } catch (e) {
+    let message  = `Can't load from url ${url}`
+    if (typeof e === "object" && e !== null && "statusCode" in e) {
+        message = `${message}: statuscode ${e.statusCode}`
+    }
+    throw new TRPCError({
+      message: `${message}: ${e}`,
+      code: "INTERNAL_SERVER_ERROR",
+    })
+  }
+  const nodeList = dom(
     "script[type='application/ld+json']"
   )
 
   if (nodeList.length === 0) {
-    throw new TRPCError({
-      message: "The linked page contains no metadata",
-      code: "INTERNAL_SERVER_ERROR",
-    })
+    return getSchemaRecipeFromMicrodata(dom)
   }
 
-  return nodeList
+  return getSchemaRecipeFromNodeList(nodeList)
 }
 
 function jsonObjectIsRecipe(jsonObject: Record<string, unknown>): boolean {
@@ -54,49 +64,54 @@ function escapeRealLineBreaksInString(input: string): string {
   })
 }
 
-function getSchemaRecipeFromNodeList(nodeList: NodeList) {
-  for (const node of nodeList.values()) {
-    const { textContent } = node
-
-    if (!textContent) {
-      logger.debug("No text content in node, trying next node")
-      continue
-    }
-
-    // Preprocess the text to ensure that it can be parsed as JSON
-    const textContentWithEscapedLinebreaks =
-      escapeRealLineBreaksInString(textContent)
-    const formattedTextContent = normalizeWhitespace(
-      textContentWithEscapedLinebreaks
-    )
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let parsedNodeContent: any
-
-    try {
-      parsedNodeContent = JSON.parse(formattedTextContent)
-    } catch (e) {
-      logger.error(
-        { error: e, textContent },
-        "Error in extracting JSON from node content"
+function getSchemaRecipeFromNodeList(nodeList: cheerio.Cheerio<domhandler.Element>) {
+  for (const nodeParent of nodeList) {
+    for (const node of nodeParent.children) {
+      if (!(node instanceof domhandler.Text)) {
+        continue
+      }
+      const textContent = node.data
+  
+      if (!textContent) {
+        logger.debug("No text content in node, trying next node")
+        continue
+      }
+  
+      // Preprocess the text to ensure that it can be parsed as JSON
+      const textContentWithEscapedLinebreaks =
+        escapeRealLineBreaksInString(textContent)
+      const formattedTextContent = normalizeWhitespace(
+        textContentWithEscapedLinebreaks
       )
-      continue
-    }
-
-    if (Array.isArray(parsedNodeContent)) {
-      for (const metadataObject of parsedNodeContent) {
-        if (jsonObjectIsRecipe(metadataObject)) {
-          return metadataObject
+  
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let parsedNodeContent: any
+  
+      try {
+        parsedNodeContent = JSON.parse(formattedTextContent)
+      } catch (e) {
+        logger.error(
+          { error: e, textContent },
+          "Error in extracting JSON from node content"
+        )
+        continue
+      }
+  
+      if (Array.isArray(parsedNodeContent)) {
+        for (const metadataObject of parsedNodeContent) {
+          if (jsonObjectIsRecipe(metadataObject)) {
+            return metadataObject
+          }
         }
-      }
-    } else {
-      if (jsonObjectIsRecipe(parsedNodeContent)) {
-        return parsedNodeContent
-      }
-      if (jsonObjectHasGraph(parsedNodeContent)) {
-        for (const graphNode of parsedNodeContent["@graph"]) {
-          if (jsonObjectIsRecipe(graphNode)) {
-            return graphNode
+      } else {
+        if (jsonObjectIsRecipe(parsedNodeContent)) {
+          return parsedNodeContent
+        }
+        if (jsonObjectHasGraph(parsedNodeContent)) {
+          for (const graphNode of parsedNodeContent["@graph"]) {
+            if (jsonObjectIsRecipe(graphNode)) {
+              return graphNode
+            }
           }
         }
       }
@@ -105,17 +120,94 @@ function getSchemaRecipeFromNodeList(nodeList: NodeList) {
   throw new Error("Unable to extract Recipe metadata from provided url")
 }
 
-export async function hydrateRecipe(url: string) {
-  const nodeList: NodeList = await getNodeListOfMetadataNodesFromUrl(url)
 
-  const recipeData = getSchemaRecipeFromNodeList(nodeList)
+function microDataExtractText(element: domhandler.Element): string {
+    const maybeContent = element.attribs["content"]
+    if (maybeContent !== undefined) {
+      return maybeContent
+    }
+    const node = cheerio.load(element)
+    return node.text()
+}
+
+interface SchemaRecipe {
+  name?: string,
+  image?: string,
+  recipeYield?: string,
+  recipeIngredient: string[],
+  recipeInstructions: string | string[],
+}
+
+function getSchemaRecipeFromMicrodata(dom: cheerio.CheerioAPI): SchemaRecipe {
+  const nodeList = dom(
+    "[itemscope]"
+  )
+
+  if (nodeList.length === 0) {
+    throw new TRPCError({
+      message: "The linked page contains no metadata",
+      code: "INTERNAL_SERVER_ERROR",
+    })
+  }
+
+  const res: SchemaRecipe = {
+    name: undefined,
+    image: undefined,
+    recipeYield: undefined,
+    recipeIngredient: [],
+    recipeInstructions: [],
+  }
+  for (const element of nodeList) {
+    const ty = element.attribs["itemtype"]
+    if (ty === undefined || !ty.toLowerCase().includes("recipe")) {
+      continue;
+    }
+    const node = cheerio.load(element)
+
+    const properties = node("[itemprop]")
+    for (const property of properties) {
+      const ty = property.attribs["itemprop"]
+      if (ty == "name") {
+        res.name = microDataExtractText(property)
+      } else if (ty == "image") {
+        res.image = microDataExtractText(property)
+      } else if (ty == "recipeYield") {
+        res.recipeYield = microDataExtractText(property)
+      } else if (ty == "recipeIngredient") {
+        res.recipeIngredient.push(microDataExtractText(property))
+      } else if (ty == "recipeInstructions") {
+        const instructions = cheerio.load(property)
+        const listItems = instructions("li")
+        if (listItems.length > 0) {
+            res.recipeInstructions = []
+            for (const listItem of listItems) {
+                res.recipeInstructions.push(microDataExtractText(listItem))
+            }
+        } else {
+            res.recipeInstructions = microDataExtractText(property)
+        }
+      } else {
+        console.log(`ignoring unknown itemtype '${ty}'`)
+      }
+    }
+  }
+
+  if (Object.keys(res).length === 0) {
+    throw new Error("Unable to extract Recipe metadata from provided url")
+  }
+  return res
+}
+
+
+export async function hydrateRecipe(url: string) {
+  const recipeData = await getSchemaRecipeFromUrl(url)
 
   const { error, data: steps } = StepsToStringSchema.safeParse(
     recipeData.recipeInstructions
   )
 
   if (error) {
-    throw new Error("Unable to parse steps")
+    throw new Error("Unable to parse steps: ".concat(error.toString()))
   }
 
   const ingredients: string[] = recipeData.recipeIngredient
