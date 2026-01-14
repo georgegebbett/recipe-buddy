@@ -15,6 +15,13 @@
       "when": 1713943610110,
       "tag": "0001_worthless_aqueduct",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1737688800000,
+      "tag": "0002_add_api_keys",
+      "breakpoints": true
     }
   ]
 }

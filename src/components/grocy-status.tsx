@@ -33,7 +33,14 @@ export const GrocyStatus = () => {
           <CheckCircle className="size-4" />
           <AlertTitle>Not connected to Grocy</AlertTitle>
           <AlertDescription>
-            Unable to connect to Grocy - check your URL and API key
+            <div className="space-y-2">
+              <p>Unable to connect to Grocy - check your URL and API key</p>
+              <p className="text-sm">
+                Set <code className="rounded bg-muted px-1 py-0.5">GROCY_BASE_URL</code> and{" "}
+                <code className="rounded bg-muted px-1 py-0.5">GROCY_API_KEY</code> environment variables.
+                Find your API key in Grocy under Settings → Manage API keys.
+              </p>
+            </div>
           </AlertDescription>
         </Alert>
       )}

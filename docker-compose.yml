@@ -1,0 +1,52 @@
+services:
+  # Production service (default - runs without any profile)
+  # Use: docker compose up
+  recipe-buddy:
+    profiles: ["", "prod"]  # Empty string makes it default
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - "3000:3000"
+    volumes:
+      - recipe-data:/home/node/app/data
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=/home/node/app/data/sqlite.db
+      - GROCY_BASE_URL=${GROCY_BASE_URL:-http://grocy:9283}
+      - GROCY_API_KEY=${GROCY_API_KEY}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-me-in-production}
+    restart: unless-stopped
+
+  # Development service (requires --profile dev)
+  # Use: docker compose --profile dev up
+  recipe-buddy-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/node_modules
+      - /home/node/app/.next
+      - recipe-data:/home/node/app/data
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=/home/node/app/data/sqlite.db
+      - GROCY_BASE_URL=${GROCY_BASE_URL:-http://grocy:9283}
+      - GROCY_API_KEY=${GROCY_API_KEY}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-me-in-production}
+    command: >
+      sh -c "pnpm install &&
+             pnpm run db:migrate:dev &&
+             pnpm run dev | pino-pretty"
+    restart: unless-stopped
+
+volumes:
+  recipe-data:
