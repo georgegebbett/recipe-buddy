@@ -58,3 +58,44 @@ export const users = sqLiteTable(
     }
   }
 )
+
+export const userRelations = relations(users, ({ many }) => ({
+  apiKeys: many(apiKeys),
+}))
+
+export type User = InferSelectModel<typeof users>
+export type InsertUser = InferInsertModel<typeof users>
+
+export const apiKeys = sqLiteTable(
+  "api_key",
+  {
+    id: integer("id", { mode: "number" })
+      .notNull()
+      .primaryKey({ autoIncrement: true }),
+    name: text("name", { length: 255 }).notNull(),
+    key: text("key", { length: 255 }).notNull().unique(),
+    userId: integer("userId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    lastUsedAt: integer("lastUsedAt", { mode: "timestamp" }),
+  },
+  (table) => {
+    return {
+      keyIdx: index("api_key_idx").on(table.key),
+      userIdIdx: index("api_key_user_id_idx").on(table.userId),
+    }
+  }
+)
+
+export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}))
+
+export type ApiKey = InferSelectModel<typeof apiKeys>
+export type InsertApiKey = InferInsertModel<typeof apiKeys>

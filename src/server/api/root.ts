@@ -1,6 +1,7 @@
 import { grocyRouter } from "~/server/api/routers/grocy"
 import { recipeRouter } from "~/server/api/routers/recipe"
 import { userRouter } from "~/server/api/routers/user"
+import { apiKeyRouter } from "~/server/api/routers/apiKey"
 import { createTRPCRouter } from "~/server/api/trpc"
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   recipe: recipeRouter,
   grocy: grocyRouter,
   users: userRouter,
+  apiKeys: apiKeyRouter,
 })
 
 // export type definition of API

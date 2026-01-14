@@ -4,10 +4,9 @@ FROM node:18-alpine AS base
 
 # Check https://github.com/nodejs/docker-node/blob/7c659dfc7bd632725695aa2112eb0cf0e5357cfd/README.md#nodealpine to understand why gcompat might be needed.
 RUN apk add --no-cache gcompat
-RUN corepack enable && corepack prepare pnpm@8.15.5 --activate
+RUN corepack enable && corepack prepare pnpm@10.6.3 --activate
 # set the store dir to a folder that is not in the project
 RUN pnpm config set store-dir ~/.pnpm-store
-RUN pnpm fetch
 
 FROM base AS deps
 USER node
@@ -39,6 +38,9 @@ ENV SKIP_ENV_VALIDATION=1
 
 RUN pnpm build
 
+# Compile migrations in builder stage where we have all dependencies
+RUN npx tsc -b ./src/server/db
+
 FROM base AS runner
 WORKDIR /home/node/app
 
@@ -66,11 +68,15 @@ COPY --from=builder --chown=node:node /home/node/app/src/server/db ./db
 
 COPY --from=builder --chown=node:node /home/node/app/migrations ./migrations
 
-# Move the run script and litestream config to the runtime image
-COPY --chown=node:node src/server/db/ ./migrations
-COPY --chown=node:node scripts/run.sh ./run.sh
+# Copy the compiled migration runner
+COPY --from=builder --chown=node:node /home/node/app/src/server/db/drizzle-migrate.mjs ./migrations/drizzle-migrate.mjs
+COPY --from=builder --chown=node:node /home/node/app/src/server/db/schema.js ./migrations/schema.js
 
-RUN npx tsc -b ./migrations
+# Copy the SQL migrations folder
+COPY --from=builder --chown=node:node /home/node/app/src/server/db/drizzle ./migrations/drizzle
+
+# Move the run script to the runtime image
+COPY --chown=node:node scripts/run.sh ./run.sh
 
 EXPOSE 3000
 

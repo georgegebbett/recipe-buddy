@@ -12,6 +12,8 @@ import { getServerAuthSession } from "~/server/auth"
 import { db } from "~/server/db"
 import superjson from "superjson"
 import { ZodError } from "zod"
+import { apiKeys } from "~/server/db/schema"
+import { eq } from "drizzle-orm"
 
 /**
  * 1. CONTEXT
@@ -26,11 +28,43 @@ import { ZodError } from "zod"
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  // First try session-based auth
   const session = await getServerAuthSession()
+  
+  // If no session, try API key auth
+  let apiKeyUser = null
+  if (!session) {
+    const apiKey = opts.headers.get("x-api-key") || opts.headers.get("authorization")?.replace("Bearer ", "")
+    
+    if (apiKey) {
+      const apiKeyRecord = await db.query.apiKeys.findFirst({
+        where: eq(apiKeys.key, apiKey),
+        with: {
+          user: true,
+        },
+      })
+      
+      if (apiKeyRecord) {
+        // Update last used timestamp
+        await db.update(apiKeys)
+          .set({ lastUsedAt: new Date() })
+          .where(eq(apiKeys.id, apiKeyRecord.id))
+        
+        apiKeyUser = apiKeyRecord.user
+      }
+    }
+  }
 
   return {
     db,
-    session,
+    session: session || (apiKeyUser ? {
+      user: {
+        id: apiKeyUser.id.toString(),
+        name: apiKeyUser.name,
+        username: apiKeyUser.username,
+      },
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(), // 1 year
+    } : null),
     ...opts,
   }
 }
