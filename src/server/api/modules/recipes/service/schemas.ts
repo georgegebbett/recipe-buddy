@@ -1,8 +1,66 @@
 import z from "zod"
 
-const StepSchema = z.object({
-  text: z.string(),
-})
+/**
+ * A single HowToStep as per schema.org/HowToStep.
+ * We use passthrough() so that extra fields like @type, name, url don't cause
+ * validation failures.
+ */
+const HowToStepSchema = z
+  .object({
+    text: z.string(),
+  })
+  .passthrough()
+
+/**
+ * A HowToSection groups steps under a heading (schema.org/HowToSection).
+ * Chefkoch and some other sites use this structure.
+ * We flatten all nested steps into a single list.
+ */
+const HowToSectionSchema = z
+  .object({
+    itemListElement: z.array(HowToStepSchema),
+  })
+  .passthrough()
+
+/**
+ * recipeInstructions can arrive in three formats across different recipe sites:
+ *
+ * 1. Plain string  — e.g. Chefkoch.de
+ *    "Zwiebeln würfeln. Dann alles zusammen braten..."
+ *
+ * 2. Array of HowToStep — most standard sites (NYT Cooking, BBC Food, …)
+ *    [{ "@type": "HowToStep", "text": "Zwiebeln würfeln." }, …]
+ *
+ * 3. Array of HowToSection — sites that group steps by section
+ *    [{ "@type": "HowToSection", "itemListElement": [{ "text": "..." }] }, …]
+ *
+ * This schema normalises all three variants into a single HTML string.
+ */
+export const StepsToStringSchema = z
+  .union([
+    z.string(),
+    z.array(HowToStepSchema),
+    z.array(HowToSectionSchema),
+  ])
+  .transform((steps) => {
+    if (typeof steps === "string") {
+      return beautifyInstructions(steps)
+    }
+
+    // Flatten HowToSection arrays into a plain list of step texts
+    const texts = steps.flatMap((step) => {
+      if ("itemListElement" in step) {
+        // HowToSection: pull out nested steps
+        return (step as z.infer<typeof HowToSectionSchema>).itemListElement.map(
+          (s) => s.text
+        )
+      }
+      // HowToStep
+      return [(step as z.infer<typeof HowToStepSchema>).text]
+    })
+
+    return beautifyInstructions(texts.join("\n\n"))
+  })
 
 const beautifyInstructions = (input: string): string => {
   const sections = input.split(/\n\n+/)
@@ -14,13 +72,6 @@ const beautifyInstructions = (input: string): string => {
 
   return formattedSections.map((section) => `<p>${section}</p>`).join("")
 }
-
-export const StepsToStringSchema = z
-  .union([z.array(StepSchema), z.string()])
-  .transform((steps) => {
-    if (typeof steps === "string") return beautifyInstructions(steps)
-    return beautifyInstructions(steps.map((step) => step.text).join("\n\n"))
-  })
 
 const baseUrlSchema = z.union([z.string(), z.object({ url: z.string() })])
 export const RecipeImageUrlSchema = z
